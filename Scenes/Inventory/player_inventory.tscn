@@ -1,0 +1,22 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Scripts/Inventory/inventory.gd" id="1_inv"]
+[ext_resource type="Script" path="res://Scripts/Inventory/item_interactor.gd" id="2_int"]
+[ext_resource type="Script" path="res://Scripts/Inventory/inventory_screen.gd" id="3_scr"]
+[ext_resource type="Script" path="res://Scripts/Inventory/item_hand.gd" id="4_hand"]
+
+[node name="PlayerInventory" type="Node"]
+script = ExtResource("1_inv")
+
+[node name="ItemHand" type="Node" parent="." node_paths=PackedStringArray("inventory")]
+script = ExtResource("4_hand")
+inventory = NodePath("..")
+
+[node name="ItemInteractor" type="Node" parent="." node_paths=PackedStringArray("inventory", "hand")]
+script = ExtResource("2_int")
+inventory = NodePath("..")
+hand = NodePath("../ItemHand")
+
+[node name="InventoryScreen" type="CanvasLayer" parent="." node_paths=PackedStringArray("inventory")]
+script = ExtResource("3_scr")
+inventory = NodePath("..")

@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://dngrto4qu8516"]
+
+[ext_resource type="Script" uid="uid://i7qc1j8wwx3g" path="res://Scripts/UI/Splash Screen/video_stream_player.gd" id="1_gwdbo"]
+
+[node name="Control" type="MarginContainer" unique_id=1765233090]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1034466790]
+layout_mode = 2
+color = Color(0, 0, 0, 1)
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=1104744255]
+layout_mode = 2
+
+[node name="VideoStreamPlayer" type="VideoStreamPlayer" parent="CenterContainer" unique_id=1605653127 node_paths=PackedStringArray("logo_player")]
+custom_minimum_size = Vector2(480, 270)
+layout_mode = 2
+expand = true
+script = ExtResource("1_gwdbo")
+logo_player = NodePath(".")
+
+[connection signal="finished" from="CenterContainer/VideoStreamPlayer" to="CenterContainer/VideoStreamPlayer" method="_on_finished"]

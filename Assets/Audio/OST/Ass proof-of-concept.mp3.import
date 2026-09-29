@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://ihjxj3ebkeu"
+path="res://.godot/imported/Ass proof-of-concept.mp3-085629ebb3b546bea3e74e5b892887a4.mp3str"
+
+[deps]
+
+source_file="res://Assets/Audio/OST/Ass proof-of-concept.mp3"
+dest_files=["res://.godot/imported/Ass proof-of-concept.mp3-085629ebb3b546bea3e74e5b892887a4.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

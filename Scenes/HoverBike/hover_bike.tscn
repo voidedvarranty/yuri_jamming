@@ -1,0 +1,204 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://bjpxe761xpjaw" path="res://Scripts/HoverBike/hover_bike.gd" id="1_bike"]
+[ext_resource type="Script" uid="uid://d3qr47m0eltso" path="res://Scripts/Logic/StatisticsList/statistics_list_scr.gd" id="2_list"]
+[ext_resource type="Script" uid="uid://bi405jf26703l" path="res://Scripts/Logic/Statistics/statistic_number.gd" id="3_num"]
+[ext_resource type="Script" uid="uid://m8clerky6nmt" path="res://Scripts/Logic/Statistics/statistic_bool.gd" id="4_bool"]
+[ext_resource type="Script" uid="uid://e8unvn1lpxnh" path="res://Scripts/Logic/Statistics/statistic_vector_DD.gd" id="5_vec2"]
+[ext_resource type="Script" uid="uid://butxpb03fjp7b" path="res://Scripts/Logic/StateEngine/state_engine_script.gd" id="6_engine"]
+[ext_resource type="Script" uid="uid://cfti0kq83hts3" path="res://Scripts/HoverBike/States/parked.gd" id="7_parked"]
+[ext_resource type="Script" uid="uid://bktdtel3v14q" path="res://Scripts/HoverBike/States/cruising.gd" id="8_cruising"]
+[ext_resource type="Script" uid="uid://yguvgbv1frg4" path="res://Scripts/HoverBike/States/boosting.gd" id="9_boosting"]
+[ext_resource type="Script" uid="uid://wfg5t18h4lpl" path="res://Scripts/HoverBike/States/airborne.gd" id="10_airborne"]
+[ext_resource type="Script" uid="uid://c13vpv7ij2tb1" path="res://Scripts/HoverBike/States/braking.gd" id="11_braking"]
+[ext_resource type="Script" uid="uid://qtuj3wq1red" path="res://Scripts/HoverBike/States/reversing.gd" id="12_reversing"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_bike"]
+size = Vector3(0.9, 0.5, 2.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_body"]
+size = Vector3(0.9, 0.5, 2.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_nose"]
+size = Vector3(0.6, 0.35, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="Mat_nose"]
+albedo_color = Color(1, 0.45, 0.1, 1)
+
+[node name="HoverBike" type="RigidBody3D"]
+script = ExtResource("1_bike")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_bike")
+
+[node name="Body" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_body")
+
+[node name="Nose" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, -0.9)
+mesh = SubResource("BoxMesh_nose")
+surface_material_override/0 = SubResource("Mat_nose")
+
+[node name="StatisticList" type="Node" parent="."]
+script = ExtResource("2_list")
+metadata/_custom_type_script = "uid://d3qr47m0eltso"
+
+[node name="HoverHeight" type="Node" parent="StatisticList"]
+script = ExtResource("3_num")
+statistic_value = 0.8
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="SpringStrength" type="Node" parent="StatisticList"]
+script = ExtResource("3_num")
+statistic_value = 45.0
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="SpringDamping" type="Node" parent="StatisticList"]
+script = ExtResource("3_num")
+statistic_value = 8.0
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="EngineAccel" type="Node" parent="StatisticList"]
+script = ExtResource("3_num")
+statistic_value = 25.0
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="ReverseAccel" type="Node" parent="StatisticList"]
+script = ExtResource("3_num")
+statistic_value = 12.0
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="BrakeForce" type="Node" parent="StatisticList"]
+script = ExtResource("3_num")
+statistic_value = 35.0
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="MaxReverseSpeed" type="Node" parent="StatisticList"]
+script = ExtResource("3_num")
+statistic_value = 8.0
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="BoostMultiplier" type="Node" parent="StatisticList"]
+script = ExtResource("3_num")
+statistic_value = 1.8
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="MaxSpeed" type="Node" parent="StatisticList"]
+script = ExtResource("3_num")
+statistic_value = 30.0
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="TurnSpeed" type="Node" parent="StatisticList"]
+script = ExtResource("3_num")
+statistic_value = 2.2
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="TurnResponse" type="Node" parent="StatisticList"]
+script = ExtResource("3_num")
+statistic_value = 8.0
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="LateralGrip" type="Node" parent="StatisticList"]
+script = ExtResource("3_num")
+statistic_value = 3.0
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="IdleDrag" type="Node" parent="StatisticList"]
+script = ExtResource("3_num")
+statistic_value = 0.6
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="AirControl" type="Node" parent="StatisticList"]
+script = ExtResource("3_num")
+statistic_value = 0.2
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="UprightStrength" type="Node" parent="StatisticList"]
+script = ExtResource("3_num")
+statistic_value = 10.0
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="UprightDamping" type="Node" parent="StatisticList"]
+script = ExtResource("3_num")
+statistic_value = 6.0
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="LeanAngle" type="Node" parent="StatisticList"]
+script = ExtResource("3_num")
+statistic_value = 0.35
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="MaxDismountSpeed" type="Node" parent="StatisticList"]
+script = ExtResource("3_num")
+statistic_value = 8.0
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="ForwardSpeed" type="Node" parent="StatisticList"]
+script = ExtResource("3_num")
+hide_in_list = true
+statistic_value = 0.0
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="Grounded" type="Node" parent="StatisticList"]
+script = ExtResource("4_bool")
+hide_in_list = true
+metadata/_custom_type_script = "uid://m8clerky6nmt"
+
+[node name="Boosting" type="Node" parent="StatisticList"]
+script = ExtResource("4_bool")
+hide_in_list = true
+metadata/_custom_type_script = "uid://m8clerky6nmt"
+
+[node name="InputDirection" type="Node" parent="StatisticList"]
+script = ExtResource("5_vec2")
+hide_in_list = true
+locked = false
+metadata/_custom_type_script = "uid://e8unvn1lpxnh"
+
+[node name="StateEngine" type="Node" parent="." node_paths=PackedStringArray("initial_state", "actor")]
+script = ExtResource("6_engine")
+initial_state = NodePath("Parked")
+actor = NodePath("..")
+metadata/_custom_type_script = "uid://butxpb03fjp7b"
+
+[node name="Parked" type="Node" parent="StateEngine"]
+script = ExtResource("7_parked")
+
+[node name="RiddenStateEngine" type="Node" parent="StateEngine" node_paths=PackedStringArray("initial_state")]
+script = ExtResource("6_engine")
+initial_state = NodePath("Cruising")
+metadata/_custom_type_script = "uid://butxpb03fjp7b"
+
+[node name="Cruising" type="Node" parent="StateEngine/RiddenStateEngine"]
+script = ExtResource("8_cruising")
+
+[node name="Boosting" type="Node" parent="StateEngine/RiddenStateEngine"]
+script = ExtResource("9_boosting")
+
+[node name="Braking" type="Node" parent="StateEngine/RiddenStateEngine"]
+script = ExtResource("11_braking")
+
+[node name="Reversing" type="Node" parent="StateEngine/RiddenStateEngine"]
+script = ExtResource("12_reversing")
+
+[node name="Airborne" type="Node" parent="StateEngine/RiddenStateEngine"]
+script = ExtResource("10_airborne")

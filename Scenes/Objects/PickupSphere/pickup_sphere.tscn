@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://djefxspu0712n"]
+
+[ext_resource type="Script" uid="uid://c2bmegq5o38s3" path="res://Scripts/Objects/PickupSphere/pickup_sphere.gd" id="1_llryr"]
+[ext_resource type="Script" uid="uid://bqqgxr07il5jf" path="res://Scripts/Objects/PickupSphere/pickup_node.gd" id="2_s666v"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_g4v7s"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_grab"]
+
+[node name="Node3D" type="RigidBody3D" unique_id=1389820583 groups=["CanBePickedUp"]]
+script = ExtResource("1_llryr")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1367202997]
+mesh = SubResource("SphereMesh_g4v7s")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=546000676]
+shape = SubResource("SphereShape3D_grab")
+
+[node name="PickupNode" type="Node" parent="." unique_id=1698447478]
+script = ExtResource("2_s666v")

@@ -1,0 +1,78 @@
+[gd_scene format=3 uid="uid://bqft37mjb3ugt"]
+
+[ext_resource type="Script" uid="uid://bosuxxqu7ihfu" path="res://Scripts/Main/main.gd" id="1_lixft"]
+[ext_resource type="PackedScene" uid="uid://dafxpj0c1t616" path="res://Scenes/UI/Pause Menu/pause_menu.tscn" id="2_76geb"]
+[ext_resource type="Shader" uid="uid://dyjtejd4wpkda" path="res://Shaders/Background/trippy_background.gdshader" id="2_qw60k"]
+[ext_resource type="PackedScene" uid="uid://dcp81nxwcbiqy" path="res://Scenes/Misc/chinchilla/input_test_chinchilla.tscn" id="4_5yls4"]
+[ext_resource type="PackedScene" uid="uid://ohlfcjhf7852" path="res://Scenes/Misc/chinchilla/chinchilla_poop.tscn" id="5_2a143"]
+[ext_resource type="Script" uid="uid://b3c6sbox8dh3a" path="res://Scripts/Misc/Chinchilla/poop_label.gd" id="5_p6jpk"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5yls4"]
+shader = ExtResource("2_qw60k")
+shader_parameter/base_colour = Color(0.001, 0.001, 0.003, 1)
+shader_parameter/colour_red = Color(0.85, 0.16, 0.18, 1)
+shader_parameter/colour_orange = Color(0.9, 0.45, 0.12, 1)
+shader_parameter/colour_yellow = Color(0.95, 0.82, 0.18, 1)
+shader_parameter/colour_green = Color(0.2, 0.72, 0.28, 1)
+shader_parameter/colour_blue = Color(0.16, 0.42, 0.9, 1)
+shader_parameter/colour_indigo = Color(0.34, 0.22, 0.72, 1)
+shader_parameter/colour_violet = Color(0.62, 0.2, 0.78, 1)
+shader_parameter/base_colour_strength = 0.035
+shader_parameter/swirl_colour_strength = 0.24
+shader_parameter/movement_speed = 0.35
+shader_parameter/colour_cycle_speed = 0.1
+shader_parameter/scale = 7.0
+shader_parameter/softness = 0.72
+shader_parameter/curve_strength = 0.18
+shader_parameter/curve_scale = 4.5
+shader_parameter/swirl_density = 16.0
+shader_parameter/swirl_thickness = 0.022
+shader_parameter/swirl_spin_speed = 0.45
+shader_parameter/black_cutoff = 0.035
+
+[node name="main" type="Node" unique_id=1907013364]
+script = ExtResource("1_lixft")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=714981416]
+z_index = -100
+material = SubResource("ShaderMaterial_5yls4")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.12591085, 0.12591085, 0.12591082, 1)
+
+[node name="Label" type="Label" parent="." unique_id=1031365401]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -190.0
+offset_top = -26.5
+offset_right = 209.0
+offset_bottom = 26.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 12
+text = "WELKOM IN DE NOODGEVALLENONTSNAPPINGSTERUGVALSCENE.
+TERUGTOETS TER ONTSNAPPING AAN DIT VAGEVUUR. 
+NA EEN CIRCA TIENSECONDIGE VOORBEREIDINGSPERIODE VOLGT EZELGELUID.
+BIJ DEZEN IS AAN DE WAARSCHUWINGSPLICHT VOLDAAN."
+
+[node name="PauseMenu" parent="." unique_id=624797746 instance=ExtResource("2_76geb")]
+visible = false
+z_index = 100
+
+[node name="InputTestChinchilla" parent="." unique_id=6053887 instance=ExtResource("4_5yls4")]
+position = Vector2(183, 228)
+poop_scene = ExtResource("5_2a143")
+poop_parent_path = NodePath("../PoopContainer")
+
+[node name="PoopLabel" type="Label" parent="." unique_id=1668993339]
+offset_right = 40.0
+offset_bottom = 14.0
+script = ExtResource("5_p6jpk")
+
+[node name="PoopContainer" type="Node2D" parent="." unique_id=1896438433]

@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://8w5s2m5ge78i"]
+
+[ext_resource type="Script" uid="uid://butxpb03fjp7b" path="res://Scripts/Logic/StateEngine/state_engine_script.gd" id="1_v5rd4"]
+
+[node name="state_engine" type="Node"]
+script = ExtResource("1_v5rd4")

@@ -1,0 +1,222 @@
+[gd_scene format=3 uid="uid://0aw6o2kqpo31"]
+
+[ext_resource type="Script" uid="uid://chyhgvd3ylhoy" path="res://Scripts/PlayerCharacter/player_character.gd" id="1_xbcx4"]
+[ext_resource type="Script" uid="uid://butxpb03fjp7b" path="res://Scripts/Logic/StateEngine/state_engine_script.gd" id="2_vlfjb"]
+[ext_resource type="Script" uid="uid://d3qr47m0eltso" path="res://Scripts/Logic/StatisticsList/statistics_list_scr.gd" id="2_wwltf"]
+[ext_resource type="Script" uid="uid://e8unvn1lpxnh" path="res://Scripts/Logic/Statistics/statistic_vector_DD.gd" id="3_eb1wa"]
+[ext_resource type="Script" uid="uid://bi405jf26703l" path="res://Scripts/Logic/Statistics/statistic_number.gd" id="4_eb1wa"]
+[ext_resource type="Script" uid="uid://bh8k7ej1xj8p3" path="res://Scripts/Logic/Statistics/statistic_vector_DDD.gd" id="5_250gc"]
+[ext_resource type="Script" uid="uid://vy721cw2pnto" path="res://Scripts/PlayerCharacter/grab_range_ray_cast_3d.gd" id="6_akf18"]
+[ext_resource type="Script" uid="uid://xhnp53a20fwu" path="res://Scripts/PlayerCharacter/States/idle.gd" id="7_g70ow"]
+[ext_resource type="Script" uid="uid://cataxverm5f2y" path="res://Scripts/PlayerCharacter/States/walking.gd" id="8_lmc7k"]
+[ext_resource type="Script" uid="uid://byf8ogfsxsd7e" path="res://Scripts/PlayerCharacter/States/jumped.gd" id="9_lmc7k"]
+[ext_resource type="Script" uid="uid://ckkogjdn7vwrv" path="res://Scripts/PlayerCharacter/States/falling.gd" id="10_ea7jj"]
+[ext_resource type="Script" uid="uid://bbhiu7qanxtl2" path="res://Scripts/PlayerCharacter/States/landed.gd" id="12_0hgau"]
+[ext_resource type="PackedScene" path="res://Scenes/Inventory/player_inventory.tscn" id="13_inv"]
+[ext_resource type="Script" path="res://Scripts/PlayerCharacter/head_bob.gd" id="14_headbob"]
+[ext_resource type="Script" uid="uid://m8clerky6nmt" path="res://Scripts/Logic/Statistics/statistic_bool.gd" id="15_bool"]
+[ext_resource type="Script" path="res://Scripts/PlayerCharacter/States/sprinting.gd" id="16_sprint"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_crda1"]
+
+[node name="PlayerCharacter" type="CharacterBody3D" unique_id=308607481]
+script = ExtResource("1_xbcx4")
+
+[node name="StatisticList" type="Node" parent="." unique_id=941448780]
+script = ExtResource("2_wwltf")
+metadata/_custom_type_script = "uid://d3qr47m0eltso"
+
+[node name="InputDirection" type="Node" parent="StatisticList" unique_id=1732199591]
+script = ExtResource("3_eb1wa")
+hide_in_list = true
+locked = false
+metadata/_custom_type_script = "uid://e8unvn1lpxnh"
+
+[node name="MovementDirection" type="Node" parent="StatisticList" unique_id=1429474041]
+script = ExtResource("5_250gc")
+hide_in_list = true
+locked = false
+metadata/_custom_type_script = "uid://bh8k7ej1xj8p3"
+
+[node name="MovementSpeed" type="Node" parent="StatisticList" unique_id=871578558]
+script = ExtResource("4_eb1wa")
+statistic_value = 1.0
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="JumpHeight" type="Node" parent="StatisticList" unique_id=632840306]
+script = ExtResource("4_eb1wa")
+statistic_value = 10.0
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="JumpsTaken" type="Node" parent="StatisticList" unique_id=1642554143]
+script = ExtResource("4_eb1wa")
+check_limits = true
+minimum_statistic_value = 0.0
+maximum_statistic_value = 2.0
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="IsSprinting" type="Node" parent="StatisticList"]
+script = ExtResource("15_bool")
+hide_in_list = true
+metadata/_custom_type_script = "uid://m8clerky6nmt"
+
+[node name="SprintMultiplier" type="Node" parent="StatisticList"]
+script = ExtResource("4_eb1wa")
+statistic_value = 1.6
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="Gravity" type="Node" parent="StatisticList"]
+script = ExtResource("4_eb1wa")
+statistic_value = 6.0
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="MouseSensitivity" type="Node" parent="StatisticList"]
+script = ExtResource("4_eb1wa")
+statistic_value = 0.003
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="MaxLookAngle" type="Node" parent="StatisticList"]
+script = ExtResource("4_eb1wa")
+statistic_value = 89.0
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="IdleBobSpeed" type="Node" parent="StatisticList"]
+script = ExtResource("4_eb1wa")
+statistic_value = 0.5
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="IdleBobAmount" type="Node" parent="StatisticList"]
+script = ExtResource("4_eb1wa")
+statistic_value = 0.008
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="WalkBobSpeed" type="Node" parent="StatisticList"]
+script = ExtResource("4_eb1wa")
+statistic_value = 1.8
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="WalkBobAmount" type="Node" parent="StatisticList"]
+script = ExtResource("4_eb1wa")
+statistic_value = 0.035
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="RunBobSpeed" type="Node" parent="StatisticList"]
+script = ExtResource("4_eb1wa")
+statistic_value = 2.6
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="RunBobAmount" type="Node" parent="StatisticList"]
+script = ExtResource("4_eb1wa")
+statistic_value = 0.055
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="BobSmoothing" type="Node" parent="StatisticList"]
+script = ExtResource("4_eb1wa")
+statistic_value = 8.0
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="JumpKick" type="Node" parent="StatisticList"]
+script = ExtResource("4_eb1wa")
+statistic_value = 0.05
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="LandingDip" type="Node" parent="StatisticList"]
+script = ExtResource("4_eb1wa")
+statistic_value = 0.012
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="Health" type="Node" parent="StatisticList"]
+script = ExtResource("4_eb1wa")
+statistic_value = 100.0
+check_limits = true
+minimum_statistic_value = 0.0
+maximum_statistic_value = 100.0
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="PickupReach" type="Node" parent="StatisticList"]
+script = ExtResource("4_eb1wa")
+statistic_value = 2.5
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="PickupRadius" type="Node" parent="StatisticList"]
+script = ExtResource("4_eb1wa")
+statistic_value = 0.25
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
+
+[node name="HeadBob" type="Node" parent="."]
+script = ExtResource("14_headbob")
+
+[node name="Neck" type="Node3D" parent="." unique_id=328915196]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="Head" type="Node3D" parent="Neck" unique_id=214085228]
+
+[node name="Camera3D" type="Camera3D" parent="Neck/Head" unique_id=2058198660]
+transform = Transform3D(1, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0)
+
+[node name="GrabRangeRayCast3D" type="RayCast3D" parent="Neck/Head/Camera3D" unique_id=1027724442]
+target_position = Vector3(0, 0, -5)
+script = ExtResource("6_akf18")
+
+[node name="HoldPositionMarker3D" type="Marker3D" parent="Neck/Head/Camera3D/GrabRangeRayCast3D" unique_id=1170153588]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.7926263)
+gizmo_extents = 1.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=2116171323]
+shape = SubResource("CapsuleShape3D_crda1")
+
+[node name="StateEngine" type="Node" parent="." unique_id=181925443 node_paths=PackedStringArray("initial_state", "actor")]
+script = ExtResource("2_vlfjb")
+initial_state = NodePath("NormalStateEngine")
+actor = NodePath("..")
+metadata/_custom_type_script = "uid://butxpb03fjp7b"
+
+[node name="NormalStateEngine" type="Node" parent="StateEngine" unique_id=385413283 node_paths=PackedStringArray("initial_state")]
+script = ExtResource("2_vlfjb")
+initial_state = NodePath("Idle")
+metadata/_custom_type_script = "uid://butxpb03fjp7b"
+
+[node name="Idle" type="Node" parent="StateEngine/NormalStateEngine" unique_id=1711241910]
+script = ExtResource("7_g70ow")
+
+[node name="Walking" type="Node" parent="StateEngine/NormalStateEngine" unique_id=188102031]
+script = ExtResource("8_lmc7k")
+
+[node name="Sprinting" type="Node" parent="StateEngine/NormalStateEngine"]
+script = ExtResource("16_sprint")
+
+[node name="InAirStateEngine" type="Node" parent="StateEngine" unique_id=399691674 node_paths=PackedStringArray("initial_state")]
+script = ExtResource("2_vlfjb")
+initial_state = NodePath("Jumped")
+metadata/_custom_type_script = "uid://butxpb03fjp7b"
+
+[node name="Jumped" type="Node" parent="StateEngine/InAirStateEngine" unique_id=1845376650]
+script = ExtResource("9_lmc7k")
+
+[node name="Falling" type="Node" parent="StateEngine/InAirStateEngine" unique_id=1159266424]
+script = ExtResource("10_ea7jj")
+
+[node name="Landed" type="Node" parent="StateEngine/InAirStateEngine" unique_id=56510347]
+script = ExtResource("12_0hgau")
+metadata/_custom_type_script = "uid://corrh6unt5pe0"
+
+[node name="PlayerInventory" parent="." instance=ExtResource("13_inv")]

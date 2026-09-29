@@ -1,0 +1,65 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Scripts/Inventory/inventory_item.gd" id="1_item"]
+[ext_resource type="Script" path="res://Scripts/Inventory/crafting_recipe.gd" id="2_recipe"]
+[ext_resource type="PackedScene" path="res://Scenes/Items/rock.tscn" id="3_rock"]
+[ext_resource type="PackedScene" path="res://Scenes/Items/stick.tscn" id="4_stick"]
+[ext_resource type="PackedScene" path="res://Scenes/Items/rope.tscn" id="5_rope"]
+
+[sub_resource type="StandardMaterial3D" id="Mat_handle"]
+albedo_color = Color(0.45, 0.3, 0.16, 1)
+roughness = 1.0
+
+[sub_resource type="StandardMaterial3D" id="Mat_head"]
+albedo_color = Color(0.46, 0.45, 0.43, 1)
+roughness = 1.0
+
+[sub_resource type="StandardMaterial3D" id="Mat_bind"]
+albedo_color = Color(0.72, 0.6, 0.38, 1)
+roughness = 1.0
+
+[sub_resource type="BoxMesh" id="Mesh_handle"]
+material = SubResource("Mat_handle")
+size = Vector3(0.05, 0.05, 0.65)
+
+[sub_resource type="BoxMesh" id="Mesh_head"]
+material = SubResource("Mat_head")
+size = Vector3(0.06, 0.2, 0.13)
+
+[sub_resource type="BoxMesh" id="Mesh_bind"]
+material = SubResource("Mat_bind")
+size = Vector3(0.07, 0.07, 0.06)
+
+[sub_resource type="BoxShape3D" id="Shape_axe"]
+size = Vector3(0.08, 0.2, 0.66)
+
+[node name="StoneAxe" type="RigidBody3D"]
+mass = 1.5
+
+[node name="Handle" type="MeshInstance3D" parent="."]
+mesh = SubResource("Mesh_handle")
+
+[node name="Head" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, -0.26)
+mesh = SubResource("Mesh_head")
+
+[node name="Binding" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.16)
+mesh = SubResource("Mesh_bind")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("Shape_axe")
+
+[node name="InventoryItem" type="Node" parent="."]
+script = ExtResource("1_item")
+display_name = "Stone Axe"
+description = "Rock, stick and rope. Chops things."
+max_carry = 1
+
+[node name="Recipe" type="Node" parent="InventoryItem"]
+script = ExtResource("2_recipe")
+ingredients = Dictionary[PackedScene, int]({
+ExtResource("3_rock"): 1,
+ExtResource("4_stick"): 1,
+ExtResource("5_rope"): 1
+})

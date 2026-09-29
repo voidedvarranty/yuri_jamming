@@ -1,0 +1,165 @@
+[gd_scene format=3 uid="uid://dafxpj0c1t616"]
+
+[ext_resource type="Script" uid="uid://es66sk8nxklc" path="res://Scripts/UI/Pause Menu/pause_menu.gd" id="1_2cja2"]
+[ext_resource type="AudioStream" uid="uid://brlsii31k4pcw" path="res://Assets/Audio/SFX/UI/menu_click.wav" id="2_r2i2h"]
+[ext_resource type="AudioStream" uid="uid://bkqfsw2ooppax" path="res://Assets/Audio/SFX/UI/ui_hover.wav" id="3_oykix"]
+[ext_resource type="AudioStream" uid="uid://dx08sm30svaqh" path="res://Assets/Audio/SFX/UI/new_game.wav" id="4_oykix"]
+
+[node name="PauseMenu" type="Control" unique_id=624797746]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_2cja2")
+button_hover_sound = ExtResource("3_oykix")
+button_click_sound = ExtResource("2_r2i2h")
+slider_hover_sound = ExtResource("3_oykix")
+slider_grab_sound = ExtResource("4_oykix")
+slider_visual_edge_padding = 0.07
+
+[node name="Panel" type="ColorRect" parent="." unique_id=1717142974]
+custom_minimum_size = Vector2(210, 195)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -105.0
+offset_top = -97.5
+offset_right = 105.0
+offset_bottom = 97.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+color = Color(0, 0, 0, 1)
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="." unique_id=667545618]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -108.0
+offset_top = -94.5
+offset_right = 108.0
+offset_bottom = 94.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="CenterContainer" type="CenterContainer" parent="VBoxContainer2" unique_id=1713878350]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer2/CenterContainer" unique_id=262859860]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 25
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="VBoxContainer2/CenterContainer/MarginContainer" unique_id=1354415971]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer2/CenterContainer/MarginContainer/VBoxContainer2" unique_id=1536382892]
+layout_mode = 2
+text = "PAUSED"
+horizontal_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer2/CenterContainer/MarginContainer/VBoxContainer2" unique_id=696506974]
+layout_mode = 2
+theme_override_constants/separation = 5
+alignment = 1
+
+[node name="MasterHBox" type="HBoxContainer" parent="VBoxContainer2/CenterContainer/MarginContainer/VBoxContainer2/VBoxContainer" unique_id=255722952]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="MasterLabel" type="Label" parent="VBoxContainer2/CenterContainer/MarginContainer/VBoxContainer2/VBoxContainer/MasterHBox" unique_id=1081667391]
+custom_minimum_size = Vector2(30, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Master"
+vertical_alignment = 1
+
+[node name="MasterSlider" type="HSlider" parent="VBoxContainer2/CenterContainer/MarginContainer/VBoxContainer2/VBoxContainer/MasterHBox" unique_id=259316989]
+unique_name_in_owner = true
+clip_contents = true
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1.0
+step = 0.01
+value = 0.5
+
+[node name="MusicHBox" type="HBoxContainer" parent="VBoxContainer2/CenterContainer/MarginContainer/VBoxContainer2/VBoxContainer" unique_id=1781798678]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="MusicLabel" type="Label" parent="VBoxContainer2/CenterContainer/MarginContainer/VBoxContainer2/VBoxContainer/MusicHBox" unique_id=971653868]
+custom_minimum_size = Vector2(30, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Music"
+vertical_alignment = 1
+
+[node name="MusicSlider" type="HSlider" parent="VBoxContainer2/CenterContainer/MarginContainer/VBoxContainer2/VBoxContainer/MusicHBox" unique_id=1547624416]
+unique_name_in_owner = true
+clip_contents = true
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1.0
+step = 0.01
+value = 0.5
+
+[node name="SFXHBox" type="HBoxContainer" parent="VBoxContainer2/CenterContainer/MarginContainer/VBoxContainer2/VBoxContainer" unique_id=438720650]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="SFXLabel" type="Label" parent="VBoxContainer2/CenterContainer/MarginContainer/VBoxContainer2/VBoxContainer/SFXHBox" unique_id=1498307140]
+custom_minimum_size = Vector2(30, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "SFX"
+vertical_alignment = 1
+
+[node name="SFXSlider" type="HSlider" parent="VBoxContainer2/CenterContainer/MarginContainer/VBoxContainer2/VBoxContainer/SFXHBox" unique_id=270873452]
+unique_name_in_owner = true
+clip_contents = true
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1.0
+step = 0.01
+value = 0.9
+
+[node name="BackButton" type="Button" parent="VBoxContainer2/CenterContainer/MarginContainer/VBoxContainer2" unique_id=719521834]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+text = "Back"
+
+[node name="RetryButton" type="Button" parent="VBoxContainer2/CenterContainer/MarginContainer/VBoxContainer2" unique_id=1314618152]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+text = "Restart"
+
+[node name="MainMenuButton" type="Button" parent="VBoxContainer2/CenterContainer/MarginContainer/VBoxContainer2" unique_id=328698613]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+text = "Main Menu"
+
+[connection signal="pressed" from="VBoxContainer2/CenterContainer/MarginContainer/VBoxContainer2/BackButton" to="." method="_on_back_button_pressed"]
+[connection signal="pressed" from="VBoxContainer2/CenterContainer/MarginContainer/VBoxContainer2/RetryButton" to="." method="_on_retry_button_pressed"]
+[connection signal="pressed" from="VBoxContainer2/CenterContainer/MarginContainer/VBoxContainer2/MainMenuButton" to="." method="_on_main_menu_button_pressed"]

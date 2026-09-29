@@ -1,0 +1,32 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Scripts/Inventory/inventory_item.gd" id="1_item"]
+
+[sub_resource type="StandardMaterial3D" id="Mat_rock"]
+albedo_color = Color(0.46, 0.45, 0.43, 1)
+roughness = 1.0
+
+[sub_resource type="SphereMesh" id="Mesh_rock"]
+material = SubResource("Mat_rock")
+radius = 0.14
+height = 0.2
+radial_segments = 7
+rings = 3
+
+[sub_resource type="SphereShape3D" id="Shape_rock"]
+radius = 0.11
+
+[node name="Rock" type="RigidBody3D"]
+mass = 2.0
+
+[node name="Mesh" type="MeshInstance3D" parent="."]
+mesh = SubResource("Mesh_rock")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("Shape_rock")
+
+[node name="InventoryItem" type="Node" parent="."]
+script = ExtResource("1_item")
+display_name = "Rock"
+description = "A fist-sized rock. Good for tools."
+max_carry = 5

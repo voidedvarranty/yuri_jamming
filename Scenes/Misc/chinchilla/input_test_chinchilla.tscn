@@ -1,0 +1,65 @@
+[gd_scene format=3 uid="uid://dcp81nxwcbiqy"]
+
+[ext_resource type="Script" uid="uid://2mukoo556pmx" path="res://Scripts/Misc/Chinchilla/input_test_chinchilla.gd" id="1_kydy3"]
+[ext_resource type="Texture2D" uid="uid://cka6c0xlqvmx3" path="res://Assets/Art/Characters/Chinchilla_2-Sheet (1).png" id="2_wcjaa"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yyk81"]
+atlas = ExtResource("2_wcjaa")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qjtup"]
+atlas = ExtResource("2_wcjaa")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tyseq"]
+atlas = ExtResource("2_wcjaa")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oia6e"]
+atlas = ExtResource("2_wcjaa")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t5sqe"]
+atlas = ExtResource("2_wcjaa")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_3n0sk"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yyk81")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qjtup")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tyseq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_oia6e")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t5sqe")
+}],
+"loop": true,
+"name": &"default",
+"speed": 10.0
+}]
+
+[node name="InputTestChinchilla" type="Node2D" unique_id=6053887]
+script = ExtResource("1_kydy3")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1297522028]
+sprite_frames = SubResource("SpriteFrames_3n0sk")
+autoplay = "default"
+frame_progress = 0.29319558
+
+[node name="PopupLabel" type="Label" parent="." unique_id=645329160]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(105, 0)
+offset_left = -53.0
+offset_top = -22.0
+offset_right = 52.0
+offset_bottom = -8.0
+text = "Faltbare Giraffe"
+horizontal_alignment = 1

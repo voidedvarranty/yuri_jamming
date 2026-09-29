@@ -1,0 +1,29 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Scripts/Inventory/inventory_item.gd" id="1_item"]
+
+[sub_resource type="StandardMaterial3D" id="Mat_stick"]
+albedo_color = Color(0.45, 0.3, 0.16, 1)
+roughness = 1.0
+
+[sub_resource type="BoxMesh" id="Mesh_stick"]
+material = SubResource("Mat_stick")
+size = Vector3(0.05, 0.05, 0.9)
+
+[sub_resource type="BoxShape3D" id="Shape_stick"]
+size = Vector3(0.05, 0.05, 0.9)
+
+[node name="Stick" type="RigidBody3D"]
+mass = 0.5
+
+[node name="Mesh" type="MeshInstance3D" parent="."]
+mesh = SubResource("Mesh_stick")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("Shape_stick")
+
+[node name="InventoryItem" type="Node" parent="."]
+script = ExtResource("1_item")
+display_name = "Stick"
+description = "A sturdy stick."
+max_carry = 10

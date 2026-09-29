@@ -1,0 +1,360 @@
+[gd_scene format=3 uid="uid://svqirqdt35b4"]
+
+[ext_resource type="Script" uid="uid://djref4phgcbkv" path="res://Scripts/UI/Settings/settings.gd" id="1_dfq54"]
+[ext_resource type="AudioStream" uid="uid://fy5f6aswgy7c" path="res://Assets/Audio/SFX/UI/settings_land.mp3" id="2_7yuyr"]
+[ext_resource type="AudioStream" uid="uid://brlsii31k4pcw" path="res://Assets/Audio/SFX/UI/menu_click.wav" id="2_n8st6"]
+[ext_resource type="AudioStream" uid="uid://bkqfsw2ooppax" path="res://Assets/Audio/SFX/UI/ui_hover.wav" id="3_dkbde"]
+[ext_resource type="Shader" uid="uid://dyjtejd4wpkda" path="res://Shaders/Background/trippy_background.gdshader" id="4_btyfq"]
+[ext_resource type="Script" uid="uid://sytxw8s1a7fi" path="res://Scripts/UI/Settings/key_configuration_panel.gd" id="6_hx2sp"]
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_btyfq"]
+random_pitch = 1.0293022
+streams_count = 1
+stream_0/stream = ExtResource("3_dkbde")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7yuyr"]
+shader = ExtResource("4_btyfq")
+shader_parameter/base_colour = Color(0.001, 0.001, 0.003, 1)
+shader_parameter/colour_red = Color(0.85, 0.16, 0.18, 1)
+shader_parameter/colour_orange = Color(0.9, 0.45, 0.12, 1)
+shader_parameter/colour_yellow = Color(0.95, 0.82, 0.18, 1)
+shader_parameter/colour_green = Color(0.2, 0.72, 0.28, 1)
+shader_parameter/colour_blue = Color(0.16, 0.42, 0.9, 1)
+shader_parameter/colour_indigo = Color(0.34, 0.22, 0.72, 1)
+shader_parameter/colour_violet = Color(0.62, 0.2, 0.78, 1)
+shader_parameter/base_colour_strength = 0.035
+shader_parameter/swirl_colour_strength = 0.24
+shader_parameter/movement_speed = 0.35
+shader_parameter/colour_cycle_speed = 0.1
+shader_parameter/scale = 7.0
+shader_parameter/softness = 0.72
+shader_parameter/curve_strength = 0.18
+shader_parameter/curve_scale = 4.5
+shader_parameter/swirl_density = 16.0
+shader_parameter/swirl_thickness = 0.022
+shader_parameter/swirl_spin_speed = 0.45
+shader_parameter/black_cutoff = 0.035
+
+[node name="Settings" type="Control" unique_id=933147905]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -1.0
+offset_bottom = -1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_dfq54")
+show_debug_button = true
+panel_land_sound = ExtResource("2_7yuyr")
+click_sound = ExtResource("2_n8st6")
+hover_sound = SubResource("AudioStreamRandomizer_btyfq")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=527442295]
+z_index = -100
+material = SubResource("ShaderMaterial_7yuyr")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.12591085, 0.12591085, 0.12591082, 1)
+
+[node name="MainMargin" type="MarginContainer" parent="." unique_id=1033341221]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="MainLayout" type="HBoxContainer" parent="MainMargin" unique_id=235468163]
+layout_mode = 2
+layout_direction = 2
+theme_override_constants/separation = 16
+
+[node name="LeftColumn" type="Control" parent="MainMargin/MainLayout" unique_id=198308936]
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 2
+
+[node name="LeftMenu" type="VBoxContainer" parent="MainMargin/MainLayout/LeftColumn" unique_id=1032533555]
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -48.0
+offset_right = 91.0
+offset_bottom = 48.0
+grow_vertical = 2
+theme_override_constants/separation = 8
+
+[node name="SoundSettingsButton" type="Button" parent="MainMargin/MainLayout/LeftColumn/LeftMenu" unique_id=2119214072]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+text = "Sound"
+
+[node name="DisplaySettingsButton" type="Button" parent="MainMargin/MainLayout/LeftColumn/LeftMenu" unique_id=1883571894]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+text = "Display
+"
+
+[node name="KeyConfigurationButton" type="Button" parent="MainMargin/MainLayout/LeftColumn/LeftMenu" unique_id=511694962]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+text = "Controls
+"
+
+[node name="DebugButton" type="Button" parent="MainMargin/MainLayout/LeftColumn/LeftMenu" unique_id=494420119]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+text = "Debug Menu <3"
+
+[node name="BackButton" type="Button" parent="MainMargin/MainLayout/LeftColumn/LeftMenu" unique_id=2046775153]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+text = "Back"
+
+[node name="ContentRoot" type="Control" parent="MainMargin/MainLayout" unique_id=440447840]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(304, 0)
+layout_mode = 2
+
+[node name="SoundSettingsPanel" type="PanelContainer" parent="MainMargin/MainLayout/ContentRoot" unique_id=138489164]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SoundMargin" type="MarginContainer" parent="MainMargin/MainLayout/ContentRoot/SoundSettingsPanel" unique_id=1283504348]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="SoundVBox" type="VBoxContainer" parent="MainMargin/MainLayout/ContentRoot/SoundSettingsPanel/SoundMargin" unique_id=1706306118]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TitleLabel" type="Label" parent="MainMargin/MainLayout/ContentRoot/SoundSettingsPanel/SoundMargin/SoundVBox" unique_id=1845498098]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+text = "Sound Settings"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MasterRow" type="HBoxContainer" parent="MainMargin/MainLayout/ContentRoot/SoundSettingsPanel/SoundMargin/SoundVBox" unique_id=1495959006]
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 2
+alignment = 1
+
+[node name="MasterLabel" type="Label" parent="MainMargin/MainLayout/ContentRoot/SoundSettingsPanel/SoundMargin/SoundVBox/MasterRow" unique_id=522954687]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+text = "Master"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MasterSlider" type="HSlider" parent="MainMargin/MainLayout/ContentRoot/SoundSettingsPanel/SoundMargin/SoundVBox/MasterRow" unique_id=1498960538]
+unique_name_in_owner = true
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1.0
+step = 0.01
+value = 0.5
+
+[node name="MusicRow" type="HBoxContainer" parent="MainMargin/MainLayout/ContentRoot/SoundSettingsPanel/SoundMargin/SoundVBox" unique_id=1362849133]
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 2
+alignment = 1
+
+[node name="MusicLabel" type="Label" parent="MainMargin/MainLayout/ContentRoot/SoundSettingsPanel/SoundMargin/SoundVBox/MusicRow" unique_id=1390642291]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+text = "Music"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MusicSlider" type="HSlider" parent="MainMargin/MainLayout/ContentRoot/SoundSettingsPanel/SoundMargin/SoundVBox/MusicRow" unique_id=1264306292]
+unique_name_in_owner = true
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1.0
+step = 0.01
+value = 0.5
+
+[node name="SFXRow" type="HBoxContainer" parent="MainMargin/MainLayout/ContentRoot/SoundSettingsPanel/SoundMargin/SoundVBox" unique_id=465007230]
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 2
+alignment = 1
+
+[node name="SFXLabel" type="Label" parent="MainMargin/MainLayout/ContentRoot/SoundSettingsPanel/SoundMargin/SoundVBox/SFXRow" unique_id=1872466416]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+text = "SFX"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SFXSlider" type="HSlider" parent="MainMargin/MainLayout/ContentRoot/SoundSettingsPanel/SoundMargin/SoundVBox/SFXRow" unique_id=589401201]
+unique_name_in_owner = true
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1.0
+step = 0.01
+value = 0.9
+
+[node name="ResetSettingsButton" type="Button" parent="MainMargin/MainLayout/ContentRoot/SoundSettingsPanel/SoundMargin/SoundVBox" unique_id=1446305660]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+text = "Reset Audio Settings"
+
+[node name="DisplaySettingsPanel" type="PanelContainer" parent="MainMargin/MainLayout/ContentRoot" unique_id=409786948]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DisplayMargin" type="MarginContainer" parent="MainMargin/MainLayout/ContentRoot/DisplaySettingsPanel" unique_id=1691056904]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="DisplayVBox" type="VBoxContainer" parent="MainMargin/MainLayout/ContentRoot/DisplaySettingsPanel/DisplayMargin" unique_id=1591788749]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TitleLabel" type="Label" parent="MainMargin/MainLayout/ContentRoot/DisplaySettingsPanel/DisplayMargin/DisplayVBox" unique_id=985438565]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+text = "Display Settings"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="FullscreenButton" type="CheckButton" parent="MainMargin/MainLayout/ContentRoot/DisplaySettingsPanel/DisplayMargin/DisplayVBox" unique_id=166928890]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 2
+text = "FullScreen"
+
+[node name="KeyConfigurationPanel" type="PanelContainer" parent="MainMargin/MainLayout/ContentRoot" unique_id=772705768]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("6_hx2sp")
+
+[node name="KeyMargin" type="MarginContainer" parent="MainMargin/MainLayout/ContentRoot/KeyConfigurationPanel" unique_id=1960347988]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="KeyBindVBox" type="VBoxContainer" parent="MainMargin/MainLayout/ContentRoot/KeyConfigurationPanel/KeyMargin" unique_id=1836050920]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TitleLabel" type="Label" parent="MainMargin/MainLayout/ContentRoot/KeyConfigurationPanel/KeyMargin/KeyBindVBox" unique_id=1473383294]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+text = "Keybinds"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RebindPromptLabel" type="Label" parent="MainMargin/MainLayout/ContentRoot/KeyConfigurationPanel/KeyMargin/KeyBindVBox" unique_id=1040632467]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Press a key or mouse button..."
+horizontal_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MainMargin/MainLayout/ContentRoot/KeyConfigurationPanel/KeyMargin/KeyBindVBox" unique_id=525843127]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="ControlsList" type="VBoxContainer" parent="MainMargin/MainLayout/ContentRoot/KeyConfigurationPanel/KeyMargin/KeyBindVBox/ScrollContainer" unique_id=1223708978]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ResetControlsButton" type="Button" parent="MainMargin/MainLayout/ContentRoot/KeyConfigurationPanel/KeyMargin/KeyBindVBox" unique_id=1972290230]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Reset Controls
+"
+
+[node name="DebugPanel" type="PanelContainer" parent="MainMargin/MainLayout/ContentRoot" unique_id=1316341291]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DebugMargin" type="MarginContainer" parent="MainMargin/MainLayout/ContentRoot/DebugPanel" unique_id=479600904]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="DebugVBox" type="VBoxContainer" parent="MainMargin/MainLayout/ContentRoot/DebugPanel/DebugMargin" unique_id=1362508796]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TitleLabel" type="Label" parent="MainMargin/MainLayout/ContentRoot/DebugPanel/DebugMargin/DebugVBox" unique_id=1525589340]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+text = "Debug"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DeleteSaveButton" type="Button" parent="MainMargin/MainLayout/ContentRoot/DebugPanel/DebugMargin/DebugVBox" unique_id=1512953716]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Delete save"
+
+[node name="WinButton" type="Button" parent="MainMargin/MainLayout/ContentRoot/DebugPanel/DebugMargin/DebugVBox" unique_id=753820954]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Win Screen"
+
+[node name="LoseButton" type="Button" parent="MainMargin/MainLayout/ContentRoot/DebugPanel/DebugMargin/DebugVBox" unique_id=1315989721]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Lose Screen"

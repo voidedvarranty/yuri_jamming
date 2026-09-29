@@ -1,0 +1,190 @@
+[gd_scene format=3 uid="uid://w06ykwfii71i"]
+
+[ext_resource type="Script" uid="uid://brlsu62rybphc" path="res://Scripts/UI/sound_setup.gd" id="1_a7kja"]
+[ext_resource type="AudioStream" uid="uid://d3mleireftefm" path="res://Assets/Audio/OST/EgyptianTrapBeat_final.wav" id="2_0i3u7"]
+[ext_resource type="Shader" uid="uid://dthe8x456g3c3" path="res://Scenes/UI/PregameSound/discoshader.gdshader" id="3_0i3u7"]
+[ext_resource type="Script" uid="uid://1g3brtlj4bc6" path="res://Scenes/UI/PregameSound/bass_screen_shake.gd" id="4_o4llq"]
+[ext_resource type="Texture2D" uid="uid://nwdxei615skn" path="res://Assets/Art/Environment/sandpixel.png" id="4_v7gun"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0i3u7"]
+shader = ExtResource("3_0i3u7")
+shader_parameter/disco_amount = 0.5
+shader_parameter/music_time = 0.0
+shader_parameter/bpm = 120.0
+shader_parameter/beat_offset = 0.0
+shader_parameter/beats_per_bar = 4.0
+shader_parameter/intensity = 1.0
+shader_parameter/colour_softness = 2.0
+shader_parameter/background_colour = Color(0.005, 0.004, 0.012, 1)
+shader_parameter/gold_colour = Color(0.85, 0.61, 0.2, 1)
+shader_parameter/bright_gold_colour = Color(1, 0.83, 0.4, 1)
+shader_parameter/lapis_colour = Color(0.06, 0.17, 0.48, 1)
+shader_parameter/turquoise_colour = Color(0.08, 0.55, 0.52, 1)
+shader_parameter/red_colour = Color(0.48, 0.07, 0.12, 1)
+shader_parameter/colour_cycle_beats = 8.0
+shader_parameter/beat_pulse_strength = 0.4
+shader_parameter/downbeat_strength = 0.55
+shader_parameter/beat_decay = 8.0
+shader_parameter/central_pyramid_position = Vector2(0.5, 0.5)
+shader_parameter/central_pyramid_width = 0.52
+shader_parameter/central_pyramid_height = 0.42
+shader_parameter/central_pyramid_fill = 0.16
+shader_parameter/central_pyramid_outline = 0.28
+shader_parameter/central_pyramid_line_width = 0.012
+shader_parameter/central_pyramid_pulse = 0.1
+shader_parameter/stone_line_amount = 0.12
+shader_parameter/stone_line_density = 95.0
+shader_parameter/pyramid_amount = 0.55
+shader_parameter/pyramid_columns = 9.0
+shader_parameter/pyramid_line_width = 0.025
+shader_parameter/pyramid_scroll_speed = 0.04
+shader_parameter/sparkle_amount = 0.35
+shader_parameter/sparkle_brightness = 0.95
+shader_parameter/sparkle_size = 0.11
+shader_parameter/background_twinkle_strength = 0.3
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_715ky"]
+particle_flag_disable_z = true
+direction = Vector3(0, 1, 0)
+spread = 20.0
+initial_velocity_min = 40.0
+initial_velocity_max = 110.0
+gravity = Vector3(0, 260, 0)
+scale_min = 0.39999998
+scale_max = 1.1999999
+
+[node name="SoundSetup" type="Control" unique_id=1691619526]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_a7kja")
+music_preview = ExtResource("2_0i3u7")
+
+[node name="ScreenRoot" type="Control" parent="." unique_id=1493860300]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Background" type="ColorRect" parent="ScreenRoot" unique_id=52239796]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_0i3u7")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="SandParticles" type="GPUParticles2D" parent="." unique_id=985342122]
+unique_name_in_owner = true
+position = Vector2(238, 12)
+emitting = false
+amount = 600
+texture = ExtResource("4_v7gun")
+one_shot = true
+explosiveness = 1.0
+randomness = 0.35
+process_material = SubResource("ParticleProcessMaterial_715ky")
+
+[node name="Content" type="VBoxContainer" parent="." unique_id=710055643]
+z_index = 2
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -175.0
+offset_top = -86.0
+offset_right = 175.0
+offset_bottom = 86.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 8
+
+[node name="TitleLabel" type="Label" parent="Content" unique_id=1672516017]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+text = "Sound Settings"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DescriptionLabel" type="Label" parent="Content" unique_id=436453081]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+text = "Sound Settings"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MusicRow" type="HBoxContainer" parent="Content" unique_id=1125600097]
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 2
+alignment = 1
+
+[node name="MusicLabel" type="Label" parent="Content/MusicRow" unique_id=1783491099]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+text = "Music"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MusicSlider" type="HSlider" parent="Content/MusicRow" unique_id=811686079]
+unique_name_in_owner = true
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1.0
+step = 0.01
+value = 0.5
+
+[node name="MusicLabel2" type="Label" parent="Content/MusicRow" unique_id=1738664510]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+text = "Music"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ButtonRow" type="HBoxContainer" parent="Content" unique_id=1630682832]
+layout_mode = 2
+alignment = 1
+
+[node name="MuteButton" type="Button" parent="Content/ButtonRow" unique_id=1376718660]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+text = "Reset Audio Settings"
+
+[node name="ContinueButton" type="Button" parent="Content/ButtonRow" unique_id=428544751]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+text = "Thank you! Let's go."
+
+[node name="BassScreenShake" type="Node" parent="." unique_id=2027995103 node_paths=PackedStringArray("shake_target")]
+unique_name_in_owner = true
+script = ExtResource("4_o4llq")
+shake_target = NodePath("../ScreenRoot")
+
+[node name="ShakeGreyProtector" type="ColorRect" parent="." unique_id=562963270]
+z_index = -1
+layout_mode = 0
+offset_left = -45.0
+offset_top = -29.0
+offset_right = 570.0
+offset_bottom = 318.0
+mouse_filter = 2
+color = Color(0, 0, 0, 1)

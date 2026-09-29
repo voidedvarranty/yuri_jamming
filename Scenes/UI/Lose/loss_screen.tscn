@@ -1,0 +1,51 @@
+[gd_scene format=3 uid="uid://b1ld20rur0pae"]
+
+[ext_resource type="Script" uid="uid://cbtuc3tf5jhpx" path="res://Scripts/UI/Lose/loss_screen.gd" id="1_b2ddn"]
+[ext_resource type="FontFile" uid="uid://c0ti0iouqg1m2" path="res://Assets/Fonts/Ruler 9.ttf" id="4_fq71i"]
+
+[node name="LossScreen" type="Control" unique_id=890772856]
+z_index = 121
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_b2ddn")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1183512054]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1701448372]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer" unique_id=758215022]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.29000002, 0.29000002, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("4_fq71i")
+text = "YOU LOSE"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RetryButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1668103217]
+layout_mode = 2
+text = " Retry "
+
+[node name="MainMenuButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1883874265]
+layout_mode = 2
+text = "Main Menu"
+
+[connection signal="pressed" from="MarginContainer/VBoxContainer/RetryButton" to="." method="_on_retry_button_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/MainMenuButton" to="." method="_on_main_menu_button_pressed"]

@@ -1,0 +1,127 @@
+[gd_scene format=3 uid="uid://w2v1glumgrpf"]
+
+[ext_resource type="Script" uid="uid://c313emscp8053" path="res://Scripts/UI/Main Menu/main_menu.gd" id="1_o14dv"]
+[ext_resource type="AudioStream" uid="uid://brlsii31k4pcw" path="res://Assets/Audio/SFX/UI/menu_click.wav" id="2_4pqbp"]
+[ext_resource type="AudioStream" uid="uid://bkqfsw2ooppax" path="res://Assets/Audio/SFX/UI/ui_hover.wav" id="2_mrfpk"]
+[ext_resource type="AudioStream" uid="uid://dx08sm30svaqh" path="res://Assets/Audio/SFX/UI/new_game.wav" id="3_4pqbp"]
+[ext_resource type="Texture2D" uid="uid://b5tup536kmsls" path="res://Placeholders/clipart278522.png" id="3_o14dv"]
+[ext_resource type="Shader" uid="uid://bhv1khhmu1pt7" path="res://Shaders/Background/scrolling_background_shader.gdshader" id="4_mrfpk"]
+[ext_resource type="Shader" uid="uid://dyjtejd4wpkda" path="res://Shaders/Background/trippy_background.gdshader" id="5_h5u6l"]
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_h5u6l"]
+random_pitch = 1.0293022
+streams_count = 1
+stream_0/stream = ExtResource("2_mrfpk")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fa2q1"]
+shader = ExtResource("5_h5u6l")
+shader_parameter/base_colour = Color(0.001, 0.001, 0.003, 1)
+shader_parameter/colour_red = Color(0.85, 0.16, 0.18, 1)
+shader_parameter/colour_orange = Color(0.9, 0.45, 0.12, 1)
+shader_parameter/colour_yellow = Color(0.95, 0.82, 0.18, 1)
+shader_parameter/colour_green = Color(0.2, 0.72, 0.28, 1)
+shader_parameter/colour_blue = Color(0.16, 0.42, 0.9, 1)
+shader_parameter/colour_indigo = Color(0.34, 0.22, 0.72, 1)
+shader_parameter/colour_violet = Color(0.62, 0.2, 0.78, 1)
+shader_parameter/base_colour_strength = 0.035
+shader_parameter/swirl_colour_strength = 0.24
+shader_parameter/movement_speed = 0.35
+shader_parameter/colour_cycle_speed = 0.1
+shader_parameter/scale = 7.0
+shader_parameter/softness = 0.72
+shader_parameter/curve_strength = 0.18
+shader_parameter/curve_scale = 4.5
+shader_parameter/swirl_density = 16.0
+shader_parameter/swirl_thickness = 0.022
+shader_parameter/swirl_spin_speed = 0.45
+shader_parameter/black_cutoff = 0.035
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_57qmd"]
+shader = ExtResource("4_mrfpk")
+shader_parameter/scrollSpeed = 0.030000001425
+shader_parameter/angleDegrees = 45.0
+shader_parameter/repeatX = 10.0
+shader_parameter/repeatY = 10.0
+shader_parameter/tint = Color(0.5137255, 0.5137255, 0.5137255, 0.20392157)
+
+[node name="MainMenu" type="Control" unique_id=1266202951]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_o14dv")
+new_game_scene = "res://Scenes/Areas/Playground/Playground.tscn"
+click_sound = ExtResource("2_4pqbp")
+hover_sound = SubResource("AudioStreamRandomizer_h5u6l")
+new_game_sound = ExtResource("3_4pqbp")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=788947633]
+z_index = -100
+material = SubResource("ShaderMaterial_fa2q1")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.12591085, 0.12591085, 0.12591082, 1)
+
+[node name="Donkey" type="TextureRect" parent="." unique_id=326550094]
+unique_name_in_owner = true
+z_index = -2
+layout_mode = 0
+offset_right = 1120.0
+offset_bottom = 650.0
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("3_o14dv")
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=1332451769]
+texture_filter = 1
+material = SubResource("ShaderMaterial_57qmd")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 3
+stretch_mode = 6
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1660010953]
+custom_minimum_size = Vector2(25, 0)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -46.5
+offset_top = -36.0
+offset_right = 46.5
+offset_bottom = 65.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="NewGameButton" type="Button" parent="VBoxContainer" unique_id=1113614768]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(50, 12)
+layout_mode = 2
+text = "New Game"
+
+[node name="Load" type="Button" parent="VBoxContainer" unique_id=962934673]
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+text = "Credits"
+
+[node name="SettingsButton" type="Button" parent="VBoxContainer" unique_id=94191866]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+text = "Settings"
+
+[connection signal="pressed" from="VBoxContainer/NewGameButton" to="." method="_on_new_game_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Load" to="." method="_on_load_pressed"]
+[connection signal="pressed" from="VBoxContainer/SettingsButton" to="." method="_on_settings_button_pressed"]

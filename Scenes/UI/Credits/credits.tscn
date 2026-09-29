@@ -1,0 +1,799 @@
+[gd_scene format=3 uid="uid://dakr5hllkrg23"]
+
+[ext_resource type="Script" uid="uid://cddsmdy1w5yk" path="res://Scripts/UI/Credits/CreditsSceneScript.gd" id="1_nrxth"]
+[ext_resource type="Shader" uid="uid://d3p53i3yjaoyb" path="res://Shaders/Credits/creditsbg.gdshader" id="2_68nu0"]
+[ext_resource type="PackedScene" uid="uid://6ygx4fc342gq" path="res://Scenes/UI/Credits/credits_person.tscn" id="2_nrxth"]
+
+[sub_resource type="Gradient" id="Gradient_t355c"]
+interpolation_mode = 1
+offsets = PackedFloat32Array(0, 0.31188118, 0.45544556, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0.47657818, 0.47657818, 0.47657818, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_brckq"]
+noise_type = 2
+frequency = 0.0891
+fractal_octaves = 1
+
+[sub_resource type="NoiseTexture3D" id="NoiseTexture3D_cgxf6"]
+width = 128
+height = 128
+depth = 128
+noise = SubResource("FastNoiseLite_brckq")
+color_ramp = SubResource("Gradient_t355c")
+seamless = true
+seamless_blend_skirt = 0.05
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_c8hcs"]
+shader = ExtResource("2_68nu0")
+shader_parameter/noise_texture = SubResource("NoiseTexture3D_cgxf6")
+shader_parameter/color_one = Color(0.12156863, 0.0627451, 0.16470589, 1)
+shader_parameter/color_two = Color(0.22352941, 0.03529412, 0.2784314, 1)
+shader_parameter/noise_scale = 0.60000002524012
+shader_parameter/seethe_speed = 0.030000001425
+shader_parameter/target_height = 180.0
+
+[sub_resource type="Animation" id="Animation_nrxth"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("scroll:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(240, 180)]
+}
+
+[sub_resource type="Animation" id="Animation_68nu0"]
+resource_name = "credits"
+length = 96.0
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("scroll:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 91.6),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(240, 180), Vector2(240, -1100)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ylkhe"]
+_data = {
+&"RESET": SubResource("Animation_nrxth"),
+&"credits": SubResource("Animation_68nu0")
+}
+
+[node name="Credits" type="Node2D" unique_id=481457128]
+script = ExtResource("1_nrxth")
+
+[node name="bg" type="ColorRect" parent="." unique_id=190846824]
+material = SubResource("ShaderMaterial_c8hcs")
+offset_right = 960.0
+offset_bottom = 1560.0
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="scroll" type="Node2D" parent="." unique_id=791001808]
+position = Vector2(240, 180)
+
+[node name="Title" type="Label" parent="scroll" unique_id=789488298]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -151.5
+offset_right = 151.5
+offset_bottom = 23.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 32
+text = "GAME NAME HERE"
+horizontal_alignment = 1
+
+[node name="Header" type="Label" parent="scroll" unique_id=196780587]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -151.0
+offset_top = 45.0
+offset_right = 152.0
+offset_bottom = 90.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 24
+text = "Directors:"
+horizontal_alignment = 1
+
+[node name="Person11" parent="scroll" unique_id=253336201 instance=ExtResource("2_nrxth")]
+offset_left = -46.0
+offset_top = 78.0
+offset_right = -46.0
+offset_bottom = 78.0
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Person12" parent="scroll" unique_id=802270838 instance=ExtResource("2_nrxth")]
+offset_left = 45.0
+offset_top = 78.0
+offset_right = 45.0
+offset_bottom = 78.0
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Header2" type="Label" parent="scroll" unique_id=1671172463]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -151.0
+offset_top = 190.0
+offset_right = 152.0
+offset_bottom = 235.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 24
+text = "Team Leads:"
+horizontal_alignment = 1
+
+[node name="Person1" parent="scroll" unique_id=38207462 instance=ExtResource("2_nrxth")]
+offset_left = -91.0
+offset_top = 225.0
+offset_right = -91.0
+offset_bottom = 225.0
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Person5" parent="scroll" unique_id=1586122642 instance=ExtResource("2_nrxth")]
+offset_top = 225.0
+offset_bottom = 225.0
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Person3" parent="scroll" unique_id=1039538349 instance=ExtResource("2_nrxth")]
+offset_left = 92.0
+offset_top = 225.0
+offset_right = 92.0
+offset_bottom = 225.0
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Person6" parent="scroll" unique_id=1015541011 instance=ExtResource("2_nrxth")]
+offset_left = -91.0
+offset_top = 338.0
+offset_right = -91.0
+offset_bottom = 338.0
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Person7" parent="scroll" unique_id=1501877046 instance=ExtResource("2_nrxth")]
+offset_left = 92.0
+offset_top = 338.0
+offset_right = 92.0
+offset_bottom = 338.0
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Person8" parent="scroll" unique_id=1964564914 instance=ExtResource("2_nrxth")]
+offset_left = 106.0
+offset_top = 879.0
+offset_right = 106.0
+offset_bottom = 879.0
+scale = Vector2(0.737383, 0.73061717)
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Person9" parent="scroll" unique_id=1858496460 instance=ExtResource("2_nrxth")]
+offset_left = -56.0
+offset_top = 451.0
+offset_right = -56.0
+offset_bottom = 451.0
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Person10" parent="scroll" unique_id=9759821 instance=ExtResource("2_nrxth")]
+offset_left = 62.0
+offset_top = 450.0
+offset_right = 62.0
+offset_bottom = 450.0
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Person2" parent="scroll" unique_id=2128764956 instance=ExtResource("2_nrxth")]
+offset_top = 338.0
+offset_bottom = 338.0
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Person13" parent="scroll" unique_id=43166999 instance=ExtResource("2_nrxth")]
+offset_top = 562.0
+offset_bottom = 562.0
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Header3" type="Label" parent="scroll" unique_id=830466436]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -151.0
+offset_top = 675.0
+offset_right = 152.0
+offset_bottom = 720.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 24
+text = "Team:"
+horizontal_alignment = 1
+
+[node name="smallgroup" type="Node2D" parent="scroll" unique_id=849538144]
+position = Vector2(-147, 710)
+scale = Vector2(0.758, 0.758)
+
+[node name="Person4" parent="scroll/smallgroup" unique_id=1386899798 instance=ExtResource("2_nrxth")]
+offset_left = 52.770447
+offset_top = 1.5258789e-05
+offset_right = 52.770447
+offset_bottom = 1.5258789e-05
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+metadata/_edit_use_anchors_ = true
+
+[node name="Person13" parent="scroll/smallgroup" unique_id=1463776512 instance=ExtResource("2_nrxth")]
+offset_left = 143.77045
+offset_top = 1.5258789e-05
+offset_right = 143.77045
+offset_bottom = 1.5258789e-05
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+metadata/_edit_use_anchors_ = true
+
+[node name="Person14" parent="scroll/smallgroup" unique_id=1043576054 instance=ExtResource("2_nrxth")]
+offset_left = 235.77045
+offset_top = 1.5258789e-05
+offset_right = 235.77045
+offset_bottom = 1.5258789e-05
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+metadata/_edit_use_anchors_ = true
+
+[node name="Person15" parent="scroll/smallgroup" unique_id=857997428 instance=ExtResource("2_nrxth")]
+offset_left = 327.77045
+offset_top = 1.5258789e-05
+offset_right = 327.77045
+offset_bottom = 1.5258789e-05
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+metadata/_edit_use_anchors_ = true
+
+[node name="Person5" parent="scroll/smallgroup" unique_id=1543798135 instance=ExtResource("2_nrxth")]
+offset_left = 52.770447
+offset_top = 110.81796
+offset_right = 52.770447
+offset_bottom = 110.81796
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+metadata/_edit_use_anchors_ = true
+
+[node name="Person16" parent="scroll/smallgroup" unique_id=83982525 instance=ExtResource("2_nrxth")]
+offset_left = 143.77045
+offset_top = 110.81796
+offset_right = 143.77045
+offset_bottom = 110.81796
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+metadata/_edit_use_anchors_ = true
+
+[node name="Person17" parent="scroll/smallgroup" unique_id=672805195 instance=ExtResource("2_nrxth")]
+offset_left = 235.77045
+offset_top = 110.81796
+offset_right = 235.77045
+offset_bottom = 110.81796
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+metadata/_edit_use_anchors_ = true
+
+[node name="Person18" parent="scroll/smallgroup" unique_id=725999304 instance=ExtResource("2_nrxth")]
+offset_left = 327.77045
+offset_top = 110.81796
+offset_right = 327.77045
+offset_bottom = 110.81796
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+metadata/_edit_use_anchors_ = true
+
+[node name="Person6" parent="scroll/smallgroup" unique_id=1699491492 instance=ExtResource("2_nrxth")]
+offset_left = 52.770447
+offset_top = 221.6359
+offset_right = 52.770447
+offset_bottom = 221.6359
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+metadata/_edit_use_anchors_ = true
+
+[node name="Person19" parent="scroll/smallgroup" unique_id=190199873 instance=ExtResource("2_nrxth")]
+offset_left = 143.77045
+offset_top = 221.6359
+offset_right = 143.77045
+offset_bottom = 221.6359
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+metadata/_edit_use_anchors_ = true
+
+[node name="Person20" parent="scroll/smallgroup" unique_id=1450042017 instance=ExtResource("2_nrxth")]
+offset_left = 235.77045
+offset_top = 221.6359
+offset_right = 235.77045
+offset_bottom = 221.6359
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+metadata/_edit_use_anchors_ = true
+
+[node name="Justtext" parent="scroll/smallgroup" unique_id=1807868889 instance=ExtResource("2_nrxth")]
+offset_left = 52.770447
+offset_top = 360.1583
+offset_right = 52.770447
+offset_bottom = 360.1583
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Justtext2" parent="scroll/smallgroup" unique_id=971335198 instance=ExtResource("2_nrxth")]
+offset_left = 143.77045
+offset_top = 360.1583
+offset_right = 143.77045
+offset_bottom = 360.1583
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Justtext3" parent="scroll/smallgroup" unique_id=1306248538 instance=ExtResource("2_nrxth")]
+offset_left = 235.77045
+offset_top = 360.1583
+offset_right = 235.77045
+offset_bottom = 360.1583
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Justtext4" parent="scroll/smallgroup" unique_id=483914979 instance=ExtResource("2_nrxth")]
+offset_left = 327.77042
+offset_top = 360.1583
+offset_right = 327.77042
+offset_bottom = 360.1583
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Justtext5" parent="scroll/smallgroup" unique_id=1553913865 instance=ExtResource("2_nrxth")]
+offset_left = 84.43272
+offset_top = 414.248
+offset_right = 84.43272
+offset_bottom = 414.248
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Justtext6" parent="scroll/smallgroup" unique_id=722469544 instance=ExtResource("2_nrxth")]
+offset_left = 192.61214
+offset_top = 414.248
+offset_right = 192.61214
+offset_bottom = 414.248
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Justtext8" parent="scroll/smallgroup" unique_id=2088205422 instance=ExtResource("2_nrxth")]
+offset_left = 302.1108
+offset_top = 414.248
+offset_right = 302.1108
+offset_bottom = 414.248
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Justtext9" parent="scroll/smallgroup" unique_id=563062951 instance=ExtResource("2_nrxth")]
+offset_left = 52.770447
+offset_top = 469.65704
+offset_right = 52.770447
+offset_bottom = 469.65704
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Justtext10" parent="scroll/smallgroup" unique_id=2089653020 instance=ExtResource("2_nrxth")]
+offset_left = 143.77045
+offset_top = 469.65704
+offset_right = 143.77045
+offset_bottom = 469.65704
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Justtext11" parent="scroll/smallgroup" unique_id=1350770691 instance=ExtResource("2_nrxth")]
+offset_left = 235.77045
+offset_top = 469.65704
+offset_right = 235.77045
+offset_bottom = 469.65704
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Justtext12" parent="scroll/smallgroup" unique_id=2110441222 instance=ExtResource("2_nrxth")]
+offset_left = 327.77042
+offset_top = 469.65704
+offset_right = 327.77042
+offset_bottom = 469.65704
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Justtext13" parent="scroll/smallgroup" unique_id=30337429 instance=ExtResource("2_nrxth")]
+offset_left = 80.47493
+offset_top = 525.0659
+offset_right = 80.47493
+offset_bottom = 525.0659
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Justtext15" parent="scroll/smallgroup" unique_id=1116762191 instance=ExtResource("2_nrxth")]
+offset_left = 196.5699
+offset_top = 525.0659
+offset_right = 196.5699
+offset_bottom = 525.0659
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Justtext16" parent="scroll/smallgroup" unique_id=499703431 instance=ExtResource("2_nrxth")]
+offset_left = 308.70712
+offset_top = 525.0659
+offset_right = 308.70712
+offset_bottom = 525.0659
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Justtext17" parent="scroll/smallgroup" unique_id=1245972621 instance=ExtResource("2_nrxth")]
+offset_left = 52.770447
+offset_top = 579.15564
+offset_right = 52.770447
+offset_bottom = 579.15564
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Justtext18" parent="scroll/smallgroup" unique_id=231796771 instance=ExtResource("2_nrxth")]
+offset_left = 143.77045
+offset_top = 579.15564
+offset_right = 143.77045
+offset_bottom = 579.15564
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Justtext19" parent="scroll/smallgroup" unique_id=73345354 instance=ExtResource("2_nrxth")]
+offset_left = 235.77045
+offset_top = 579.15564
+offset_right = 235.77045
+offset_bottom = 579.15564
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Justtext20" parent="scroll/smallgroup" unique_id=1963719227 instance=ExtResource("2_nrxth")]
+offset_left = 327.77042
+offset_top = 579.15564
+offset_right = 327.77042
+offset_bottom = 579.15564
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Justtext21" parent="scroll/smallgroup" unique_id=1833126288 instance=ExtResource("2_nrxth")]
+offset_left = 52.770447
+offset_top = 638.5224
+offset_right = 52.770447
+offset_bottom = 638.5224
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Justtext22" parent="scroll/smallgroup" unique_id=301518211 instance=ExtResource("2_nrxth")]
+offset_left = 143.77045
+offset_top = 638.5224
+offset_right = 143.77045
+offset_bottom = 638.5224
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Justtext23" parent="scroll/smallgroup" unique_id=2139035989 instance=ExtResource("2_nrxth")]
+offset_left = 235.77045
+offset_top = 638.5224
+offset_right = 235.77045
+offset_bottom = 638.5224
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Justtext24" parent="scroll/smallgroup" unique_id=700934219 instance=ExtResource("2_nrxth")]
+offset_left = 327.77042
+offset_top = 638.5224
+offset_right = 327.77042
+offset_bottom = 638.5224
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Justtext25" parent="scroll/smallgroup" unique_id=296623134 instance=ExtResource("2_nrxth")]
+offset_left = 52.770447
+offset_top = 697.88916
+offset_right = 52.770447
+offset_bottom = 697.88916
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Justtext26" parent="scroll/smallgroup" unique_id=171944199 instance=ExtResource("2_nrxth")]
+offset_left = 245.38257
+offset_top = 697.88916
+offset_right = 245.38257
+offset_bottom = 697.88916
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Justtext27" parent="scroll/smallgroup" unique_id=1213528987 instance=ExtResource("2_nrxth")]
+offset_left = 337.38257
+offset_top = 697.88916
+offset_right = 337.38257
+offset_bottom = 697.88916
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Justtext28" parent="scroll/smallgroup" unique_id=1286647444 instance=ExtResource("2_nrxth")]
+offset_left = 146.43799
+offset_top = 697.88916
+offset_right = 146.43799
+offset_bottom = 697.88916
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Justtext29" parent="scroll/smallgroup" unique_id=1823644813 instance=ExtResource("2_nrxth")]
+offset_left = 52.770447
+offset_top = 758.5752
+offset_right = 52.770447
+offset_bottom = 758.5752
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Justtext30" parent="scroll/smallgroup" unique_id=358631129 instance=ExtResource("2_nrxth")]
+offset_left = 143.77045
+offset_top = 758.5752
+offset_right = 143.77045
+offset_bottom = 758.5752
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Justtext31" parent="scroll/smallgroup" unique_id=865677676 instance=ExtResource("2_nrxth")]
+offset_left = 235.77045
+offset_top = 758.5752
+offset_right = 235.77045
+offset_bottom = 758.5752
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="Justtext32" parent="scroll/smallgroup" unique_id=109582101 instance=ExtResource("2_nrxth")]
+offset_left = 327.77042
+offset_top = 758.5752
+offset_right = 327.77042
+offset_bottom = 758.5752
+card_title = null
+card_description = null
+title_font_size = null
+description_font_size = null
+picture_y_offset = null
+show_picture = null
+
+[node name="anim" type="AnimationPlayer" parent="." unique_id=1687892299]
+libraries/ = SubResource("AnimationLibrary_ylkhe")
+autoplay = &"credits"
+
+[node name="Label" type="Label" parent="." unique_id=539441766]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 114.0
+offset_top = 10.0
+offset_right = 372.0
+offset_bottom = 24.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "BACKSPACE TO GO BACK TO MAIN MENU"

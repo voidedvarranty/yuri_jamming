@@ -1,0 +1,38 @@
+[gd_scene format=3 uid="uid://bpdq12wcy7jxn"]
+
+[ext_resource type="Shader" uid="uid://be5jihubr2jww" path="res://Shaders/Transition/texture_sample_transition.gdshader" id="1_fone4"]
+[ext_resource type="Script" uid="uid://ce0pug88p0qo0" path="res://Scripts/UI/Loading Screen/loading.gd" id="1_gbqax"]
+[ext_resource type="Texture2D" uid="uid://b5tup536kmsls" path="res://Placeholders/clipart278522.png" id="2_b8nro"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gbqax"]
+shader = ExtResource("1_fone4")
+shader_parameter/black_color = Color(0, 0, 0, 1)
+shader_parameter/fade_alpha = 0.0
+shader_parameter/reveal_enabled = false
+shader_parameter/reveal_scale = 0.0
+shader_parameter/reveal_center = Vector2(0.5, 0.5)
+shader_parameter/screen_aspect = 1.777777
+shader_parameter/mask_aspect = 1.0
+shader_parameter/alpha_threshold = 0.5
+shader_parameter/edge_softness = 0.03
+
+[node name="Loading" type="Control" unique_id=449616806 node_paths=PackedStringArray("overlay_rect")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_gbqax")
+cutout_texture = ExtResource("2_b8nro")
+overlay_rect = NodePath("ColorRect")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1510147488]
+material = SubResource("ShaderMaterial_gbqax")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)

@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://kgtv81bnj3pw"]
+
+[ext_resource type="Script" uid="uid://cyxygf7to10fi" path="res://Global/Music/SoundPlayer.gd" id="1_ps4my"]
+
+[node name="SFXPlayer" type="Node" unique_id=1871226481]
+script = ExtResource("1_ps4my")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1814174431]
+bus = &"SFX"

@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://b4xdej22gi4bv"]
+
+[ext_resource type="Script" uid="uid://d3qr47m0eltso" path="res://logic_elements/statistics_list/statistics_list_scr.gd" id="1_ygfuo"]
+
+[node name="statistics_list" type="Node" unique_id=35866304]
+script = ExtResource("1_ygfuo")

@@ -1,0 +1,151 @@
+[gd_scene format=3 uid="uid://bw5c37l3adx0c"]
+
+[ext_resource type="Script" uid="uid://cprk1gs3vgrhc" path="res://Scenes/UI/Tutorial Cutscene/tutorial_stuff_here.gd" id="1_457ij"]
+[ext_resource type="AudioStream" uid="uid://ckidktprhcj2e" path="res://Assets/Audio/SFX/TutorialAudioChippeh/Boring.wav" id="2_c3v2o"]
+[ext_resource type="AudioStream" uid="uid://dca4wbynhy2al" path="res://Assets/Audio/SFX/TutorialAudioChippeh/Folders.wav" id="3_rgc8x"]
+[ext_resource type="Texture2D" uid="uid://dx2onwdtfmh6c" path="res://Scenes/UI/Tutorial Cutscene/Paper bg.jpg" id="4_f36i5"]
+[ext_resource type="AudioStream" uid="uid://b2ypm8sidsky5" path="res://Assets/Audio/SFX/TutorialAudioChippeh/spinning.wav" id="4_gimpv"]
+[ext_resource type="AudioStream" uid="uid://b20uaykl54gbn" path="res://Assets/Audio/SFX/TutorialAudioChippeh/spun.wav" id="4_rgc8x"]
+[ext_resource type="AudioStream" uid="uid://xf74x4p1fw01" path="res://Assets/Audio/SFX/TutorialAudioChippeh/Laughed.wav" id="5_whj4w"]
+[ext_resource type="AudioStream" uid="uid://d3q4xf5tg0sb1" path="res://Assets/Audio/SFX/TutorialAudioChippeh/Colorwav.wav" id="6_u0o43"]
+[ext_resource type="AudioStream" uid="uid://cdpbe2qdsj3lh" path="res://Assets/Audio/SFX/TutorialAudioChippeh/TheJob.wav" id="7_r302d"]
+[ext_resource type="AudioStream" uid="uid://brr6hy4isi4n1" path="res://Assets/Audio/SFX/TutorialAudioChippeh/More spinning.wav" id="8_g8ajq"]
+[ext_resource type="AudioStream" uid="uid://ofj6h2vy1sdb" path="res://Assets/Audio/SFX/TutorialAudioChippeh/more_spinning2.wav" id="9_1oe32"]
+[ext_resource type="PackedScene" uid="uid://bdo07m6ccjfuv" path="res://Scenes/Levels/MiniGames/DraggingFolder/dragging_folder.tscn" id="9_qt3ic"]
+[ext_resource type="Texture2D" uid="uid://b1o3crcteo4xd" path="res://Assets/Art/BIGASSCROSS.png" id="10_jsbp1"]
+[ext_resource type="AudioStream" uid="uid://df65tqtbob73n" path="res://Assets/Audio/SFX/TutorialAudioChippeh/RUDE.wav" id="10_prxas"]
+[ext_resource type="AudioStream" uid="uid://csuomwyo7wam3" path="res://Assets/Audio/SFX/TutorialAudioChippeh/RUSH.wav" id="11_pfg5t"]
+[ext_resource type="Texture2D" uid="uid://dcyajvhp5iihi" path="res://Assets/Art/TA_JJ_Cutscenes_16_Base_export.png" id="14_rgc8x"]
+[ext_resource type="Texture2D" uid="uid://w3kc8uq56eve" path="res://Assets/Art/TA_JJ_Cutscenes_16_L.Eye_export.png" id="15_gimpv"]
+[ext_resource type="Texture2D" uid="uid://dbexv02xtrh7o" path="res://Assets/Art/TA_JJ_Cutscenes_16_R.Eye_export.png" id="16_whj4w"]
+[ext_resource type="VideoStream" uid="uid://bytrb6dy54uvb" path="res://Assets/clown1-2.ogv" id="17_rgc8x"]
+[ext_resource type="VideoStream" uid="uid://cbjjmom424fyb" path="res://Assets/Videos/clown3-childhooddreams.ogv" id="18_rgc8x"]
+[ext_resource type="VideoStream" uid="uid://khomxo5d0pp5" path="res://Assets/Videos/manager.ogv" id="19_gimpv"]
+
+[node name="TutorialStuffHere" type="Control" unique_id=962992174]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_457ij")
+walk_button_path = NodePath("Control/btn_Walk")
+spin_button_path = NodePath("Control/btn_Spin")
+boring_serious = ExtResource("2_c3v2o")
+boring_serious_delay = 0.0
+boring_serious_follow_up = ExtResource("3_rgc8x")
+spun = ExtResource("4_rgc8x")
+spin_laugh = ExtResource("5_whj4w")
+spinning = ExtResource("4_gimpv")
+colour = ExtResource("6_u0o43")
+TheJob = ExtResource("7_r302d")
+AnswerSpinning = ExtResource("8_g8ajq")
+MoreSpinning = ExtResource("9_1oe32")
+RUDE = ExtResource("10_prxas")
+scene_3_start_sound = ExtResource("11_pfg5t")
+sfx_volume_boost_db = -5.0
+
+[node name="Control" type="Control" parent="." unique_id=905942238]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="PaperBg" type="Sprite2D" parent="Control" unique_id=1535107134]
+position = Vector2(160, 90)
+scale = Vector2(0.455, 0.455)
+texture = ExtResource("4_f36i5")
+
+[node name="ChoiceMinigameAssetBody" type="Sprite2D" parent="Control" unique_id=395187173]
+position = Vector2(167, 87)
+scale = Vector2(0.15, 0.15)
+texture = ExtResource("14_rgc8x")
+
+[node name="ChoiceMinigameAssetEyeL" type="Sprite2D" parent="Control/ChoiceMinigameAssetBody" unique_id=992361113]
+position = Vector2(90.39994, 80)
+scale = Vector2(1.436, 1.436)
+texture = ExtResource("15_gimpv")
+
+[node name="ChoiceMinigameAssetEyeR" type="Sprite2D" parent="Control/ChoiceMinigameAssetBody" unique_id=1910900495]
+position = Vector2(-9.599983, 53.33326)
+scale = Vector2(1.4899999, 1.4899999)
+texture = ExtResource("16_whj4w")
+
+[node name="btn_Walk" type="Button" parent="Control" unique_id=1446549931]
+layout_mode = 0
+offset_left = 15.0
+offset_top = 60.0
+offset_right = 65.0
+offset_bottom = 90.0
+disabled = true
+text = "Walk"
+
+[node name="btn_Spin" type="Button" parent="Control" unique_id=1837496569]
+layout_mode = 0
+offset_left = 252.0
+offset_top = 60.0
+offset_right = 302.0
+offset_bottom = 90.0
+disabled = true
+text = "Spin"
+
+[node name="Roy Intro A" type="VideoStreamPlayer" parent="." unique_id=1792089699]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+scale = Vector2(0.17, 0.17)
+mouse_filter = 2
+stream = ExtResource("17_rgc8x")
+volume_db = 10.0
+bus = &"Music"
+
+[node name="Roy Intro B" type="VideoStreamPlayer" parent="." unique_id=602195891]
+visible = false
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+scale = Vector2(0.17, 0.17)
+mouse_filter = 2
+stream = ExtResource("18_rgc8x")
+volume_db = 10.0
+bus = &"Music"
+
+[node name="Roy Intro C" type="VideoStreamPlayer" parent="." unique_id=860724636]
+visible = false
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+scale = Vector2(0.17, 0.17)
+mouse_filter = 2
+stream = ExtResource("19_gimpv")
+volume_db = 10.0
+bus = &"Music"
+
+[node name="DraggingFolder" parent="." unique_id=1246592867 instance=ExtResource("9_qt3ic")]
+visible = false
+tutorial = true
+
+[node name="Bigasscross" type="Sprite2D" parent="." unique_id=219202573]
+position = Vector2(46, 76)
+texture = ExtResource("10_jsbp1")
+
+[node name="BlackFader" type="ColorRect" parent="." unique_id=1858965903]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[connection signal="pressed" from="Control/btn_Walk" to="." method="_on_btn_walk_pressed"]
+[connection signal="pressed" from="Control/btn_Spin" to="." method="_on_btn_spin_pressed"]
+[connection signal="finished" from="Roy Intro A" to="." method="_on_roy_intro_a_finished"]
+[connection signal="finished" from="Roy Intro B" to="." method="_on_roy_intro_b_finished"]
+[connection signal="finished" from="Roy Intro C" to="." method="_on_roy_intro_c_finished"]

@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://dv1plvrt7vbkr"]
+
+[ext_resource type="Script" uid="uid://dfdrnfai3pgxc" path="res://Global/Music/SceneMusicManager.gd" id="1_y8736"]
+
+[node name="SceneMusicManager" type="Node" unique_id=1527988943]
+script = ExtResource("1_y8736")
