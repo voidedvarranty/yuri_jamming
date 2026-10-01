@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://ccsuopn7psx67"]
 
-[ext_resource type="Texture2D" uid="uid://d153qbuqspyko" path="res://Assets/debug/lesbian_flag.jpg" id="1_b7y51"]
+[ext_resource type="Texture2D" uid="uid://dcnecwdubwb7h" path="res://Assets/debug/pride_flag_atlas.png" id="1_b7y51"]
 [ext_resource type="PackedScene" uid="uid://0aw6o2kqpo31" path="res://Scenes/PlayerCharacter/PlayerCharacter.tscn" id="1_crda1"]
 [ext_resource type="PackedScene" path="res://Scenes/HoverBike/hover_bike.tscn" id="2_20p6p"]
 [ext_resource type="Texture2D" uid="uid://dq6beqtg0ni4i" path="res://Assets/debug/KenneyGridTextures/Dark/texture_04.png" id="7_3nfyh"]
@@ -48,15 +48,29 @@ uniform vec3 uv1_offset;
 uniform vec3 uv2_scale;
 uniform vec3 uv2_offset;
 
+const int ATLAS_SIZE_X = 3;
+const int ATLAS_SIZE_Y = 7;
+//-1 for zero indexed atlas
+const int MAX_ATLAS_INDEX = 21 - 1;
+
+//lesbian flag
+uniform int flag_index : hint_range(0, MAX_ATLAS_INDEX, 1) = 9;
+
 void vertex() {
 	VERTEX.y += sin(VERTEX.x + TIME);
-	UV = UV * uv1_scale.xy + uv1_offset.xy;
-	
+	//UV = UV * uv1_scale.xy + uv1_offset.xy;
 }
 
 void fragment() {
-	vec2 base_uv = UV;
+	vec2 base_uv = UV;// / vec2(float(ATLAS_SIZE_X), float(ATLAS_SIZE_Y));// / float(flag_index) % float(ATLAS_SIZE_X), float(flag_index) / float(ATLAS_SIZE_Y));
 
+	//2d coordinates of the current flag index
+	vec2 uv_offset = vec2(float(flag_index % ATLAS_SIZE_X),float(flag_index / ATLAS_SIZE_X));
+	base_uv += uv_offset;
+	
+	//normalize coordinates
+	base_uv /= vec2(float(ATLAS_SIZE_X), float(ATLAS_SIZE_Y));
+	
 	vec4 albedo_tex = texture(texture_albedo, base_uv);
 	ALBEDO = albedo.rgb * albedo_tex.rgb;
 
@@ -75,7 +89,7 @@ render_priority = 0
 shader = SubResource("Shader_m1wv1")
 shader_parameter/albedo = Color(1, 1, 1, 1)
 shader_parameter/texture_albedo = ExtResource("1_b7y51")
-shader_parameter/albedo_texture_size = Vector2i(474, 316)
+shader_parameter/albedo_texture_size = Vector2i(5760, 7560)
 shader_parameter/point_size = 1.0
 shader_parameter/roughness = 1.0
 shader_parameter/metallic_texture_channel = Vector4(1, 0, 0, 0)
@@ -85,11 +99,32 @@ shader_parameter/uv1_scale = Vector3(1, 1, 1)
 shader_parameter/uv1_offset = Vector3(0, 0, 0)
 shader_parameter/uv2_scale = Vector3(1, 1, 1)
 shader_parameter/uv2_offset = Vector3(0, 0, 0)
+shader_parameter/flag_index = 8
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_60xd1"]
 size = Vector2(8, 5)
 subdivide_width = 10
 subdivide_depth = 10
+
+[sub_resource type="GDScript" id="GDScript_b7y51"]
+resource_name = "randomize_flag"
+script/source = "@tool
+extends MeshInstance3D
+
+#3*7 - 1 for zero index. Modify this value and same in shader if the number of flags changes.
+const MAX_ATLAS_INDEX = 21-1
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	var mat : ShaderMaterial = material_override
+
+	var rand_index := randi_range(0, MAX_ATLAS_INDEX)
+	mat.set_shader_parameter(\"flag_index\", rand_index)
+	
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	pass
+"
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_60xd1"]
 albedo_color = Color(0.50534403, 0.5053441, 0.50534403, 1)
@@ -120,6 +155,7 @@ mesh = SubResource("CylinderMesh_uiqrb")
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 4.604829, 9.765734, 0)
 material_override = SubResource("ShaderMaterial_7ipkr")
 mesh = SubResource("PlaneMesh_60xd1")
+script = SubResource("GDScript_b7y51")
 
 [node name="PlayerCharacter" parent="." unique_id=308607481 instance=ExtResource("1_crda1")]
 transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 2.076685, 1.0885532, 2.1981363)
