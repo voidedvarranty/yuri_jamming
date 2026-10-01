@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="Gamejam Template"
+config/name="Yuri Jam"
 run/main_scene="uid://dngrto4qu8516"
 config/features=PackedStringArray("4.7", "Forward Plus")
 boot_splash/show_image=false
