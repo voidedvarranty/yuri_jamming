@@ -1,9 +1,12 @@
+# StatisticVector (Vector3) - vector statistic with optional per-component min/max limits and Locked.
+
 @tool
 class_name StatisticVectorDDD extends StatisticRanged
 
 @export_group("statistic properties")
 @export var statistic_value: Vector3 : set = _set_statistic_value
 
+# Not exported; exposed only while check_limits is on. Setters re-apply limits.
 var minimum_statistic_value: Vector3 : set = _set_minimum
 var maximum_statistic_value: Vector3 : set = _set_maximum
 
@@ -21,19 +24,23 @@ func _set_maximum(new_value: Vector3) -> void:
 	maximum_statistic_value = new_value
 	_apply_limits()
 
+# Component-wise clamp (Vector3.clamp). The generic clamp() would compare vectors lexicographically.
 func _clamp_value(value):
 	return (value as Vector3).clamp(minimum_statistic_value, maximum_statistic_value)
 
 func _on_limits_enabled() -> void:
+	# No range yet: component-wise min/max with zero so the current value stays inside.
 	if minimum_statistic_value == maximum_statistic_value:
 		minimum_statistic_value = statistic_value.min(Vector3.ZERO)
 		maximum_statistic_value = statistic_value.max(Vector3.ZERO)
 
 func _set_statistic_value(new_value: Vector3) -> void:
+	# Locked: ignore the write.
 	if not _can_write():
 		return
 
 	var old_value: Vector3 = statistic_value
+	# Clamp (no-op while loading or with limits off), assign, then notify on actual change.
 	new_value = _clamp_to_range(new_value)
 	statistic_value = new_value
 

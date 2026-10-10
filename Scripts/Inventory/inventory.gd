@@ -1,6 +1,20 @@
+# Inventory - data model for carried items, the crafting mat, and the equipped item
+#
+# Invariant: carried[id] + on_mat[id] <= max_carry for every id. Moving between bag and mat
+# never changes the total, and crafting checks capacity up front, so returning mat items to
+# the bag can never overflow
+#
+# Crafting: a recipe is ready only when the mat contains exactly its
+# ingredients. Partial matches (mat is a subset of a recipe) are reported with a progress
+# value for the UI. The result is placed on the mat and returns to the bag like any mat item
+#
+# Views: InventoryScreen, ItemInteractor, ItemHand
+# All of them react to `changed` / `equipped_changed` rather than polling
+
 class_name Inventory
 extends Node
 
+# Emitted after any mutation of carried/on_mat/slot_order
 signal changed
 signal item_added(item_id: StringName, amount: int)
 signal item_removed(item_id: StringName, amount: int)
@@ -11,6 +25,7 @@ signal equipped_changed(item_id: StringName)
 signal opened
 signal closed
 
+# Target of use_effects; auto-resolved from the parent player's StatisticList
 ## Player statistics changed by items' use effects. Leave empty to use the
 ## "StatisticList" node of the player this inventory belongs to.
 @export var statistic_list: StatisticList
@@ -19,22 +34,30 @@ signal closed
 ## How far in front of the camera dropped items appear.
 @export var drop_distance: float = 1.2
 
+# item id -> count in the bag (excludes the mat)
 var carried: Dictionary = {}
+# item id -> count on the crafting mat
 var on_mat: Dictionary = {}
+#irst-acquired order; gives each item type a stable spot on the tarp
 var slot_order: Array[StringName] = []
+#ids picked up/crafted but not yet hovered in the UI
 var unseen: Dictionary = {}
 var is_open := false
+#equipped item id still counted in carried.
 var equipped: StringName = &""
 
 
 func _ready() -> void:
+	# Create default bindings only if the project doesn't define these actions
 	ensure_action(&"inventory", KEY_I)
 	ensure_action(&"interact", KEY_E)
 	ensure_action(&"drop_item", KEY_G)
 
 	ItemDatabase.ensure_loaded()
+	# Auto-unequip when the held items total drops to zero
 	changed.connect(_check_equipped)
 
+	# Default to the player's StatisticList 
 	if statistic_list == null and get_parent() != null:
 		statistic_list = get_parent().get_node_or_null("StatisticList") as StatisticList
 
@@ -62,6 +85,7 @@ func has_item(id: StringName, amount: int = 1) -> bool:
 	return count(id) >= amount
 
 
+# Capacity counts the mat too (see invariant). Unlimited items report a large number
 func space_for(id: StringName) -> int:
 	var def := get_definition(id)
 	if def == null:
@@ -79,6 +103,7 @@ func add_item(id: StringName, amount: int = 1, mark_as_new: bool = true) -> int:
 	if get_definition(id) == null:
 		push_warning("Inventory: unknown item '%s'" % id)
 		return 0
+	# Partial adds are allowed, the return value tells the caller how many fit
 	var added := mini(amount, space_for(id))
 	if added <= 0:
 		return 0
@@ -103,6 +128,7 @@ func remove_item(id: StringName, amount: int = 1) -> int:
 	return removed
 
 
+# Registers the world item, adds one, and frees the world object only if it fit.
 func pick_up(item: InventoryItem) -> bool:
 	if item == null or not item.can_pick_up:
 		return false
@@ -118,6 +144,7 @@ func drop_item(id: StringName, amount: int = 1) -> int:
 	if def == null:
 		return 0
 	var dropped := 0
+	# Spawn into the current scene in front of the camera with a small random spread and yaw
 	for i in mini(amount, count(id)):
 		var node := def.instantiate()
 		if node == null:
@@ -127,6 +154,7 @@ func drop_item(id: StringName, amount: int = 1) -> int:
 		node.rotation.y = randf() * TAU
 		dropped += 1
 		item_dropped.emit(id, node)
+	# Remove after spawning so a failed instantiate does not lose items
 	if dropped > 0:
 		remove_item(id, dropped)
 	return dropped
@@ -137,6 +165,7 @@ func use_item(id: StringName) -> bool:
 	if def == null or not def.is_usable() or count(id) <= 0:
 		return false
 	if statistic_list != null:
+		#only statistics that exist in the target list are touched missing ones are ignored 
 		for stat_name in def.use_effects:
 			if statistic_list.statistics.has(stat_name):
 				statistic_list.change_value_of(stat_name, def.use_effects[stat_name])
@@ -148,6 +177,7 @@ func use_item(id: StringName) -> bool:
 
 func equip(id: StringName) -> bool:
 	var def := get_definition(id)
+	# Can equip an item that is currently on the mat 
 	if def == null or not def.can_hold or total(id) <= 0:
 		return false
 	if equipped != id:
@@ -201,6 +231,9 @@ func clear_mat() -> void:
 		move_from_mat(id, count_on_mat(id))
 
 
+# For each recipe |fits| = every mat item is an ingredient of it, in no more than the required count
+# progress = matched ingredient count / total_needed, ready = exact match.
+#Sorted by progress so a ready recipe comes first
 func get_craft_options() -> Array[Dictionary]:
 	var options: Array[Dictionary] = []
 	if on_mat.is_empty():
@@ -215,6 +248,7 @@ func get_craft_options() -> Array[Dictionary]:
 		if not fits:
 			continue
 
+		#sum of min(on_mat, required) across the recipes ingredients
 		var have := 0
 		for id in recipe.ingredients:
 			have += mini(count_on_mat(id), int(recipe.ingredients[id]))
@@ -241,6 +275,7 @@ func craft() -> bool:
 	var option := get_ready_option()
 	if option.is_empty() or not option["can_carry"]:
 		return false
+	#consume exactly the ingredient counts, mexact match guarantees nothing else is on the mat
 	var recipe: ItemDatabase.Recipe = option["recipe"]
 
 	for id in recipe.ingredients:
@@ -248,6 +283,7 @@ func craft() -> bool:
 		if on_mat[id] <= 0:
 			on_mat.erase(id)
 
+	# Result goes onto the mat not straight into the bag
 	on_mat[recipe.result_id] = count_on_mat(recipe.result_id) + recipe.result_count
 	_give_slot(recipe.result_id)
 	unseen[recipe.result_id] = true
@@ -263,10 +299,12 @@ func _can_carry_result(recipe: ItemDatabase.Recipe) -> bool:
 		return false
 	if not def.has_carry_limit():
 		return true
+	# Accounts for recipes that consume some of their own result type.
 	var used_up := int(recipe.ingredients.get(recipe.result_id, 0))
 	return total(recipe.result_id) - used_up + recipe.result_count <= def.max_carry
 
 
+# Mat is cleared first so its items are saved as carried
 func get_save_data() -> Dictionary:
 	clear_mat()
 	return {"carried": carried.duplicate(), "slot_order": slot_order.duplicate(), "equipped": String(equipped)}
@@ -308,6 +346,7 @@ func _get_drop_position() -> Vector3:
 	return Vector3.ZERO
 
 
+#adds a physical-key default only when the action is missing, preserving user bindings
 static func ensure_action(action: StringName, key: Key) -> void:
 	if InputMap.has_action(action):
 		return

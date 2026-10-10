@@ -1,9 +1,18 @@
+# ItemDatabase - static registry of item definitions and recipes (no autoload needed).
+#
+# Lazy initialisation on first access: recursively scans ITEM_FOLDERS for scenes, instantiates
+# each one (without adding it to the tree, so no _ready/side effects), reads its InventoryItem and
+# CraftingRecipe nodes, then frees it. Recipes are resolved in a second pass so ingredient scenes can
+# be registered in any order. Items found in the world but outside these folders are registered on
+# first pickup (register_world_item), but cannot be recipe results.
+
 class_name ItemDatabase
 extends RefCounted
 
 const ITEM_FOLDERS: Array[String] = ["res://Scenes/Items"]
 
 
+# Recipe with ingredients resolved to item ids. total_needed is the sum of all counts (used for progress).
 class Recipe:
 	var result_id: StringName
 	var result_count: int = 1
@@ -12,6 +21,7 @@ class Recipe:
 
 
 static var _items: Dictionary = {}
+# scene path -> item id, so PackedScene ingredients resolve without re-instancing.
 static var _path_to_id: Dictionary = {}
 static var _recipes: Array = []
 static var _loaded := false
@@ -22,6 +32,7 @@ static func ensure_loaded() -> void:
 		return
 	_loaded = true
 
+	# Pass 1: register items and collect raw recipe data (PackedScene keys).
 	var found_recipes: Array[Dictionary] = []
 
 	for folder in ITEM_FOLDERS:
@@ -29,6 +40,7 @@ static func ensure_loaded() -> void:
 			var packed := load(path) as PackedScene
 			if packed == null:
 				continue
+			# Instantiated but never added to the tree: _ready and scripts don't run.
 			var root := packed.instantiate()
 			var item := get_item_node(root)
 			if item != null:
@@ -39,8 +51,10 @@ static func ensure_loaded() -> void:
 						"count": recipe_node.result_count,
 						"ingredients": recipe_node.ingredients.duplicate(),
 					})
+			# Not in the tree, so free() immediately rather than queue_free().
 			root.free()
 
+	# Pass 2: resolve ingredient scenes to ids; invalid recipes are skipped with a warning.
 	for data in found_recipes:
 		var recipe := Recipe.new()
 		recipe.result_id = data["result"]
@@ -75,6 +89,7 @@ static func get_recipes() -> Array:
 	return _recipes
 
 
+# Cached by resource path; registers the scene on first sight.
 static func id_for_scene(packed: PackedScene) -> StringName:
 	if packed == null:
 		return &""
@@ -89,6 +104,7 @@ static func id_for_scene(packed: PackedScene) -> StringName:
 	return id
 
 
+# Registration from a live world node: use its scene if it has one, else keep a detached duplicate as template.
 static func register_world_item(item: InventoryItem) -> ItemDefinition:
 	ensure_loaded()
 	var id := item.get_item_id()
@@ -123,6 +139,7 @@ static func _get_recipe_nodes(item: InventoryItem) -> Array[CraftingRecipe]:
 	return result
 
 
+# First registration of an id wins; later scenes with the same id only map their path to it.
 static func _register(item: InventoryItem, packed: PackedScene) -> ItemDefinition:
 	var id := item.get_item_id()
 	_path_to_id[packed.resource_path] = id
@@ -138,6 +155,8 @@ static func _find_scenes(folder: String) -> PackedStringArray:
 	var result := PackedStringArray()
 	if not DirAccess.dir_exists_absolute(folder):
 		return result
+	# ResourceLoader.list_directory (Godot 4.4+) also works in exported builds (handles .remap entries).
+	# Directory entries end with '/'.
 	for entry in ResourceLoader.list_directory(folder):
 		var path := folder.path_join(entry)
 		if entry.ends_with("/"):

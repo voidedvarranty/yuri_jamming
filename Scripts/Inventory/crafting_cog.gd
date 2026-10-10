@@ -1,3 +1,8 @@
+# CraftingCog - procedural gear icon under the crafting mat.
+# States: HIDDEN (no matching recipe), PARTIAL (progress ring), READY (gold, spinning; click to craft),
+# BLOCKED (red X: ready but the result wouldn't fit). Mouse input is handled by InventoryScreen,
+# which calls is_mouse_over(); this control itself ignores the mouse.
+
 class_name CraftingCog
 extends Control
 
@@ -10,6 +15,7 @@ enum CogState { HIDDEN, PARTIAL, READY, BLOCKED }
 @export var ready_color := Color(1.0, 0.8, 0.25, 1.0)
 @export var blocked_color := Color(0.85, 0.25, 0.2, 1.0)
 
+# Visibility is derived from state.
 var state: CogState = CogState.HIDDEN:
 	set(value):
 		state = value
@@ -39,9 +45,11 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if not visible:
 		return
+	# Idle spin while ready (faster when hovered).
 	if state == CogState.READY:
 		_angle += delta * (3.0 if hovered else 1.2)
 		queue_redraw()
+	# Short decaying spin/scale burst after a successful craft.
 	if _pop > 0.0:
 		_pop = maxf(_pop - delta * 3.0, 0.0)
 		_angle += delta * 12.0
@@ -54,12 +62,14 @@ func play_craft_effect() -> void:
 
 
 func is_mouse_over() -> bool:
+	# 3 px tolerance; the cog is small at the project's 480x270 base resolution.
 	return visible and get_global_rect().grow(3).has_point(get_global_mouse_position())
 
 
 func _draw() -> void:
 	var center := size * 0.5
 	var radius := minf(size.x, size.y) * 0.5 - 2.0
+	# Hover and craft-pop enlarge the gear.
 	radius *= 1.0 + (0.15 if hovered else 0.0) + _pop * 0.25
 
 	var fill := idle_color
@@ -70,12 +80,14 @@ func _draw() -> void:
 			fill = blocked_color
 
 	var points := _gear_points(center, radius, _angle)
+	# Filled gear (non-convex polygon is triangulated by the engine), outline, then the axle hole.
 	draw_colored_polygon(points, fill)
 	var closed := points.duplicate()
 	closed.append(points[0])
 	draw_polyline(closed, outline_color, 1.0)
 	draw_circle(center, radius * 0.28, Color(0, 0, 0, 0.6))
 
+	# Progress arc starting at 12 o'clock.
 	if state == CogState.PARTIAL:
 		draw_arc(center, radius + 2.0, -PI * 0.5, -PI * 0.5 + TAU * progress, 32, progress_color, 2.0)
 	elif state == CogState.BLOCKED:
@@ -87,6 +99,7 @@ func _draw() -> void:
 func _gear_points(center: Vector2, radius: float, angle: float) -> PackedVector2Array:
 	var points := PackedVector2Array()
 	var inner := radius * 0.72
+	# Square-wave radius: two outer then two inner vertices per tooth gives trapezoid teeth.
 	var steps := teeth * 4
 	for i in steps:
 		var a := angle + TAU * float(i) / float(steps)

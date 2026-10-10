@@ -13,9 +13,9 @@
 [ext_resource type="Script" uid="uid://ckkogjdn7vwrv" path="res://Scripts/PlayerCharacter/States/falling.gd" id="10_ea7jj"]
 [ext_resource type="Script" uid="uid://bbhiu7qanxtl2" path="res://Scripts/PlayerCharacter/States/landed.gd" id="12_0hgau"]
 [ext_resource type="PackedScene" path="res://Scenes/Inventory/player_inventory.tscn" id="13_inv"]
-[ext_resource type="Script" path="res://Scripts/PlayerCharacter/head_bob.gd" id="14_headbob"]
+[ext_resource type="Script" uid="uid://bpyd8s278oo6e" path="res://Scripts/PlayerCharacter/head_bob.gd" id="14_headbob"]
 [ext_resource type="Script" uid="uid://m8clerky6nmt" path="res://Scripts/Logic/Statistics/statistic_bool.gd" id="15_bool"]
-[ext_resource type="Script" path="res://Scripts/PlayerCharacter/States/sprinting.gd" id="16_sprint"]
+[ext_resource type="Script" uid="uid://d34o4rkrmfrib" path="res://Scripts/PlayerCharacter/States/sprinting.gd" id="16_sprint"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_crda1"]
 
@@ -58,90 +58,90 @@ maximum_statistic_value = 2.0
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="IsSprinting" type="Node" parent="StatisticList"]
+[node name="IsSprinting" type="Node" parent="StatisticList" unique_id=345315428]
 script = ExtResource("15_bool")
 hide_in_list = true
 metadata/_custom_type_script = "uid://m8clerky6nmt"
 
-[node name="SprintMultiplier" type="Node" parent="StatisticList"]
+[node name="SprintMultiplier" type="Node" parent="StatisticList" unique_id=1905522848]
 script = ExtResource("4_eb1wa")
 statistic_value = 1.6
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="Gravity" type="Node" parent="StatisticList"]
+[node name="Gravity" type="Node" parent="StatisticList" unique_id=1370233457]
 script = ExtResource("4_eb1wa")
 statistic_value = 6.0
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="MouseSensitivity" type="Node" parent="StatisticList"]
+[node name="MouseSensitivity" type="Node" parent="StatisticList" unique_id=1045197912]
 script = ExtResource("4_eb1wa")
 statistic_value = 0.003
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="MaxLookAngle" type="Node" parent="StatisticList"]
+[node name="MaxLookAngle" type="Node" parent="StatisticList" unique_id=328307699]
 script = ExtResource("4_eb1wa")
 statistic_value = 89.0
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="IdleBobSpeed" type="Node" parent="StatisticList"]
+[node name="IdleBobSpeed" type="Node" parent="StatisticList" unique_id=131613131]
 script = ExtResource("4_eb1wa")
 statistic_value = 0.5
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="IdleBobAmount" type="Node" parent="StatisticList"]
+[node name="IdleBobAmount" type="Node" parent="StatisticList" unique_id=1763957264]
 script = ExtResource("4_eb1wa")
 statistic_value = 0.008
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="WalkBobSpeed" type="Node" parent="StatisticList"]
+[node name="WalkBobSpeed" type="Node" parent="StatisticList" unique_id=842537888]
 script = ExtResource("4_eb1wa")
 statistic_value = 1.8
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="WalkBobAmount" type="Node" parent="StatisticList"]
+[node name="WalkBobAmount" type="Node" parent="StatisticList" unique_id=1771836085]
 script = ExtResource("4_eb1wa")
 statistic_value = 0.035
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="RunBobSpeed" type="Node" parent="StatisticList"]
+[node name="RunBobSpeed" type="Node" parent="StatisticList" unique_id=1987183567]
 script = ExtResource("4_eb1wa")
 statistic_value = 2.6
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="RunBobAmount" type="Node" parent="StatisticList"]
+[node name="RunBobAmount" type="Node" parent="StatisticList" unique_id=1213574213]
 script = ExtResource("4_eb1wa")
 statistic_value = 0.055
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="BobSmoothing" type="Node" parent="StatisticList"]
+[node name="BobSmoothing" type="Node" parent="StatisticList" unique_id=1128252837]
 script = ExtResource("4_eb1wa")
 statistic_value = 8.0
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="JumpKick" type="Node" parent="StatisticList"]
+[node name="JumpKick" type="Node" parent="StatisticList" unique_id=362495747]
 script = ExtResource("4_eb1wa")
 statistic_value = 0.05
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="LandingDip" type="Node" parent="StatisticList"]
+[node name="LandingDip" type="Node" parent="StatisticList" unique_id=1307074059]
 script = ExtResource("4_eb1wa")
 statistic_value = 0.012
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="Health" type="Node" parent="StatisticList"]
+[node name="Health" type="Node" parent="StatisticList" unique_id=1771031524]
 script = ExtResource("4_eb1wa")
 statistic_value = 100.0
 check_limits = true
@@ -150,20 +150,22 @@ maximum_statistic_value = 100.0
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="PickupReach" type="Node" parent="StatisticList"]
+[node name="PickupReach" type="Node" parent="StatisticList" unique_id=1623600774]
 script = ExtResource("4_eb1wa")
 statistic_value = 2.5
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="PickupRadius" type="Node" parent="StatisticList"]
+[node name="PickupRadius" type="Node" parent="StatisticList" unique_id=577342457]
 script = ExtResource("4_eb1wa")
 statistic_value = 0.25
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="HeadBob" type="Node" parent="."]
+[node name="HeadBob" type="Node" parent="." unique_id=1663609387 node_paths=PackedStringArray("player", "head")]
 script = ExtResource("14_headbob")
+player = NodePath("..")
+head = NodePath("../Neck/Head")
 
 [node name="Neck" type="Node3D" parent="." unique_id=328915196]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
@@ -201,7 +203,7 @@ script = ExtResource("7_g70ow")
 [node name="Walking" type="Node" parent="StateEngine/NormalStateEngine" unique_id=188102031]
 script = ExtResource("8_lmc7k")
 
-[node name="Sprinting" type="Node" parent="StateEngine/NormalStateEngine"]
+[node name="Sprinting" type="Node" parent="StateEngine/NormalStateEngine" unique_id=930598600]
 script = ExtResource("16_sprint")
 
 [node name="InAirStateEngine" type="Node" parent="StateEngine" unique_id=399691674 node_paths=PackedStringArray("initial_state")]
@@ -219,4 +221,4 @@ script = ExtResource("10_ea7jj")
 script = ExtResource("12_0hgau")
 metadata/_custom_type_script = "uid://corrh6unt5pe0"
 
-[node name="PlayerInventory" parent="." instance=ExtResource("13_inv")]
+[node name="PlayerInventory" parent="." unique_id=375512729 instance=ExtResource("13_inv")]

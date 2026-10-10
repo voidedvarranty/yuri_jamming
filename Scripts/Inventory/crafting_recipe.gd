@@ -1,7 +1,12 @@
+# CraftingRecipe - one way to craft the parent InventoryItem.
+# Multiple CraftingRecipe children = alternative recipes. Ingredients are item scenes (resolved
+# to item ids by ItemDatabase at load), and the mat must contain EXACTLY these items to craft.
+
 @tool
 class_name CraftingRecipe
 extends Node
 
+# PackedScene keys (drag from FileSystem) avoid id typos; values are required counts.
 ## Ingredient item scenes and how many of each are needed.
 @export var ingredients: Dictionary[PackedScene, int] = {}
 ## How many items one craft makes (e.g. 5 arrows).

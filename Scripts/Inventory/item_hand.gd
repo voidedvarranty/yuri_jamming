@@ -1,6 +1,23 @@
+# ItemHand - first-person held item and inspect mode.
+#
+# Node chain (built at runtime): HandRig -> Hand -> Grip -> InspectPivot -> item instance.
+#   HandRig  copies the camera's global transform in NORMAL mode. During inspect it is pinned
+#            to the camera transform captured at the start, so rotating the camera does not
+#            drag the hand along (the camera never "chases" the moving hand).
+#   Hand     tweened between rest_offset and inspect_offset.
+#   Grip     item anchor (a node named "Grip" inside hand_scene if provided).
+#   Pivot    accumulates the free inspect rotation; tweened back to identity on exit.
+#
+# Inspect enter: compute where the item centre WILL be once the hand reaches inspect_offset,
+# derive the camera rotation that centres that point, then tween hand + camera in parallel.
+# Inspect exit: tween pivot, hand and camera back together. The player's physics is
+# suspended meanwhile (stops movement, pitch clamping and head bob), and mouse motion is
+# consumed in _input so the player's own mouse look never sees it.
+
 class_name ItemHand
 extends Node
 
+# ENTERING/LEAVING are tween phases; input that toggles inspect is ignored during them.
 enum Mode { NORMAL, ENTERING, INSPECTING, LEAVING }
 
 @export var inventory: Inventory
@@ -43,6 +60,7 @@ var _grip: Node3D
 var _pivot: Node3D
 var _item_node: Node3D
 var _tween: Tween
+# Rig anchor during inspect, and the camera rotation to restore on exit.
 var _frozen_camera_transform := Transform3D.IDENTITY
 var _camera_rest := Quaternion.IDENTITY
 
@@ -56,6 +74,7 @@ func _ready() -> void:
 		inventory = get_parent() as Inventory
 	_player = inventory.get_parent() if inventory != null else get_parent()
 	if camera == null and _player != null:
+		# Default camera: first Camera3D under the player.
 		for found in _player.find_children("*", "Camera3D", true, false):
 			camera = found
 			break
@@ -71,6 +90,7 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if camera == null or not _rig.visible:
 		return
+	# Updated in _process so the rig matches the camera at render rate.
 	if mode == Mode.NORMAL:
 		_rig.global_transform = camera.global_transform
 	else:
@@ -78,6 +98,7 @@ func _process(_delta: float) -> void:
 
 
 func _notification(what: int) -> void:
+	# Owner disabled (e.g. mounted on the hover bike): abort inspect and hide the rig.
 	if what == NOTIFICATION_DISABLED:
 		_end_inspect_now()
 		if _rig != null:
@@ -88,6 +109,7 @@ func _notification(what: int) -> void:
 
 
 func _input(event: InputEvent) -> void:
+	# _input runs before _unhandled_input, so consuming mouse motion here blocks the player's look.
 	if mode == Mode.NORMAL or inventory == null or inventory.is_open:
 		return
 	if event is InputEventMouseMotion:
@@ -99,6 +121,7 @@ func _input(event: InputEvent) -> void:
 		stop_inspect()
 
 
+# NORMAL mode only: inspect / put away / drop for the held item.
 func _unhandled_input(event: InputEvent) -> void:
 	if inventory == null or inventory.is_open or mode != Mode.NORMAL or held_id == &"":
 		return
@@ -122,28 +145,36 @@ func start_inspect() -> void:
 	if mode != Mode.NORMAL or held_id == &"" or camera == null:
 		return
 	var body := _player as CharacterBody3D
+	# Disallow inspect mid-air: suspending physics would leave the player hanging.
 	if freeze_player_while_inspecting and body != null and not body.is_on_floor():
 		return
 
 	mode = Mode.ENTERING
 	if freeze_player_while_inspecting and _player != null:
+		# Only the player script's tick is suspended; its child nodes (state engine, HeadBob) keep processing,
+		# and HeadBob checks is_physics_processing() to hold still.
 		_player.set_physics_process(false)
 
 	_frozen_camera_transform = camera.global_transform
 	_camera_rest = camera.quaternion
 	_rig.global_transform = _frozen_camera_transform
 
+	# 1. Target hand transform and the grip's offset within the hand (works for nested Grip nodes).
 	var hand_end := Transform3D(Basis.from_euler(_degrees_to_radians(inspect_rotation_degrees)), inspect_offset)
 	var grip_in_hand := _hand.global_transform.affine_inverse() * _grip.global_transform
+	# Item centre in grip/pivot space (pivot rotation is identity in NORMAL mode).
 	var item_center_local := Vector3.ZERO
 	if _item_node != null:
 		item_center_local = _aabb_in_pivot(_item_node).get_center()
+	# World-space point where the item centre will end up.
 	var item_end := _frozen_camera_transform * hand_end * grip_in_hand * item_center_local
 
+	# 2. Camera rotation (in its parent's space) that looks straight at that point.
 	var camera_parent := camera.get_parent() as Node3D
 	var target_local := camera_parent.global_transform.affine_inverse() * item_end
 	var camera_target := Basis.looking_at((target_local - camera.position).normalized(), Vector3.UP).get_rotation_quaternion()
 
+	# 3. Parallel tweens; mode switches to INSPECTING when they finish.
 	_new_tween()
 	_tween.tween_property(_hand, "position", inspect_offset, transition_time)
 	_tween.tween_property(_hand, "quaternion", Quaternion.from_euler(_degrees_to_radians(inspect_rotation_degrees)), transition_time)
@@ -151,6 +182,7 @@ func start_inspect() -> void:
 	_tween.chain().tween_callback(func() -> void: mode = Mode.INSPECTING)
 
 
+# Reverse all three motions in parallel, starting from wherever they currently are.
 func stop_inspect() -> void:
 	if mode != Mode.INSPECTING and mode != Mode.ENTERING:
 		return
@@ -173,6 +205,7 @@ func _finish_inspect() -> void:
 		_player.set_physics_process(true)
 
 
+# Immediate reset without tweens, used when the inventory opens or the held item changes.
 func _end_inspect_now() -> void:
 	if mode == Mode.NORMAL:
 		return
@@ -186,6 +219,7 @@ func _end_inspect_now() -> void:
 	_finish_inspect()
 
 
+# Quaternion slerp avoids Euler wrap-around issues.
 func _blend_camera(weight: float, from: Quaternion, to: Quaternion) -> void:
 	if camera != null:
 		camera.quaternion = from.slerp(to, weight)
@@ -193,6 +227,7 @@ func _blend_camera(weight: float, from: Quaternion, to: Quaternion) -> void:
 
 func _spin_item(relative: Vector2) -> void:
 	var view := camera.global_basis.orthonormalized()
+	# Rotate around the camera's screen axes in world space, unrestricted (full 360 on both axes).
 	var spin := Basis(view.y, relative.x * rotate_sensitivity) * Basis(view.x, relative.y * rotate_sensitivity)
 	_pivot.global_basis = (spin * _pivot.global_basis).orthonormalized()
 
@@ -200,6 +235,7 @@ func _spin_item(relative: Vector2) -> void:
 func _new_tween() -> void:
 	if _tween != null:
 		_tween.kill()
+	# Tweens are bound to this node, so they pause with the tree (inventory) and stop if the player is disabled.
 	_tween = create_tween().set_parallel(true).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 
 
@@ -223,6 +259,7 @@ func _on_equipped_changed(id: StringName) -> void:
 	if node == null:
 		_rig.visible = false
 		return
+	# Display copy: no scripts, and the body is removed from the physics space (doesn't block raycasts).
 	node.process_mode = Node.PROCESS_MODE_DISABLED
 	_pivot.add_child(node)
 	_fit_item(node, def)
@@ -238,6 +275,7 @@ func _on_inventory_opened() -> void:
 func _fit_item(node: Node3D, def: ItemDefinition) -> void:
 	var basis := Basis.from_euler(_degrees_to_radians(def.hand_rotation))
 	node.transform = Transform3D(basis, Vector3.ZERO)
+	# Only shrink items larger than max_item_size, then apply the per-item hand_scale and centre on the grip.
 	var box := _aabb_in_pivot(node)
 	var longest := maxf(box.size.x, maxf(box.size.y, box.size.z))
 	var fit := 1.0
@@ -249,6 +287,7 @@ func _fit_item(node: Node3D, def: ItemDefinition) -> void:
 
 
 func _aabb_in_pivot(node: Node3D) -> AABB:
+	# AABB of all GeometryInstance3D descendants, expressed in pivot space.
 	var to_pivot := _pivot.global_transform.affine_inverse()
 	var result := AABB()
 	var has_any := false
@@ -289,11 +328,13 @@ func _build_rig() -> void:
 	var model: Node3D = null
 	if hand_scene != null:
 		model = hand_scene.instantiate() as Node3D
+	# Placeholder arm when no hand_scene is set (or it isn't a Node3D).
 	if model == null:
 		model = _make_placeholder_arm()
 	_hand.add_child(model)
 	_no_shadows(model)
 
+	# Use the model's own Grip node if it has one.
 	_grip = model.find_child("Grip", true, false) as Node3D
 	if _grip == null:
 		_grip = Node3D.new()

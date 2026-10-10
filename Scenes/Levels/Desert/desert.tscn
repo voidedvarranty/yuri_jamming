@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://dos85sg0uguby"]
+
+[ext_resource type="PackedScene" uid="uid://dxlamgl31mmuh" path="res://Assets/3DModels/Desert/Desert.fbx" id="1_iknd1"]
+[ext_resource type="Texture2D" uid="uid://duskc15t0apeo" path="res://Assets/3DModels/Desert/desertLEVEL1_0.png" id="2_wuelp"]
+[ext_resource type="Texture2D" uid="uid://xgqupqq0li4k" path="res://Assets/3DModels/Desert/normalDesert.png" id="3_up5ms"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_exoie"]
+albedo_texture = ExtResource("2_wuelp")
+normal_enabled = true
+normal_texture = ExtResource("3_up5ms")
+uv1_scale = Vector3(100, 100, 100)
+
+[node name="Desert" unique_id=386311619 instance=ExtResource("1_iknd1")]
+
+[node name="Plane" parent="." index="0" unique_id=1031935826]
+surface_material_override/0 = SubResource("StandardMaterial3D_exoie")

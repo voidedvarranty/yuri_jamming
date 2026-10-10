@@ -1,3 +1,15 @@
+# ItemInteractor - world pickup (interact action), centre crosshair and on-screen prompt.
+#
+# Target selection (_find_item), evaluated every physics tick:
+#   1. Exact: a ray from the active camera; if it hits an item, that item wins.
+#   2. Forgiving: a capsule ("tube") of radius PickupRadius along the same ray. Candidates are scored
+#      by perpendicular distance from the aim line; anything farther than the ray's blocking hit
+#      (+0.3 m) is rejected, so items can't be grabbed through walls.
+# Reach and radius come from the player's PickupReach / PickupRadius statistics when present.
+#
+# HUD is hidden while paused (inventory/pause menu), while the owner is disabled (hover bike),
+# and while ItemHand is inspecting.
+
 class_name ItemInteractor
 extends Node
 
@@ -24,6 +36,7 @@ var _layer: CanvasLayer
 var _prompt: Label
 var _crosshair: Crosshair
 var _message_timer := 0.0
+# Reused query shape (resized per tick) to avoid allocating every frame.
 var _search_shape := CapsuleShape3D.new()
 
 
@@ -32,19 +45,23 @@ func _ready() -> void:
 	if inventory == null:
 		inventory = get_parent() as Inventory
 	if inventory != null:
+		# Hide immediately on open; NOTIFICATION_PAUSED follows when the tree pauses.
 		inventory.opened.connect(_hide_hud)
 	_build_hud()
 
 
 func _physics_process(delta: float) -> void:
+	# No pickups or HUD while inspecting (the camera is aimed at the held item).
 	if hand != null and hand.is_inspecting():
 		looked_at = null
 		_hide_hud()
 		return
+	# Re-shown every active tick, which also restores it after pause/disable ends.
 	_crosshair.visible = show_crosshair
 
 	looked_at = _find_item()
 	_crosshair.highlighted = looked_at != null
+	# A temporary message (e.g. 'Can't carry more') holds the prompt until it expires.
 	if _message_timer > 0.0:
 		_message_timer -= delta
 		return
@@ -58,6 +75,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	get_viewport().set_input_as_handled()
 
+	# Resolve the definition before pick_up(), which frees the world node on success.
 	var def := ItemDatabase.register_world_item(looked_at)
 	if inventory.pick_up(looked_at):
 		_play(pickup_sound)
@@ -70,6 +88,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _notification(what: int) -> void:
+	# There is no matching 'show' here: the next active physics tick restores the HUD.
 	if what == NOTIFICATION_PAUSED or what == NOTIFICATION_DISABLED:
 		_hide_hud()
 
@@ -84,11 +103,13 @@ func _find_item() -> InventoryItem:
 	var direction := (-cam.global_basis.z).normalized()
 	var space := cam.get_world_3d().direct_space_state
 
+	# Exclude the player's own body from both queries.
 	var exclude: Array[RID] = []
 	var body := _get_player_body()
 	if body != null:
 		exclude.append(body.get_rid())
 
+	# Step 1: exact hit. A non-item hit becomes the occlusion distance for step 2.
 	var ray := PhysicsRayQueryParameters3D.create(from, from + direction * max_reach, collision_mask, exclude)
 	var hit := space.intersect_ray(ray)
 	var blocked_at := INF
@@ -101,8 +122,11 @@ func _find_item() -> InventoryItem:
 	if radius <= 0.0:
 		return null
 
+	# Step 2: capsule centred halfway along the ray, long axis aligned with the aim direction.
 	_search_shape.radius = radius
 	_search_shape.height = maxf(max_reach, radius * 2.0 + 0.01)
+	# Build an orthonormal basis with Y = aim direction (capsules are Y-aligned).
+	# Fall back to RIGHT as the helper axis when looking almost straight up/down.
 	var side := direction.cross(Vector3.UP if absf(direction.y) < 0.99 else Vector3.RIGHT).normalized()
 	var tube_basis := Basis(side, direction, side.cross(direction))
 	var query := PhysicsShapeQueryParameters3D.new()
@@ -113,6 +137,7 @@ func _find_item() -> InventoryItem:
 
 	var best: InventoryItem = null
 	var best_distance := INF
+	# Score by distance from the aim line, using the item root's origin.
 	for result in space.intersect_shape(query, 16):
 		var item := InventoryItem.find_on(result["collider"])
 		if item == null or not item.can_pick_up or item.get_item_root() == null:
@@ -121,6 +146,7 @@ func _find_item() -> InventoryItem:
 		var along := to_item.dot(direction)
 		if along <= 0.0 or along > max_reach + radius:
 			continue
+		# Behind whatever the exact ray hit -> occluded. 0.3 m slack lets items lying on the hit floor count.
 		if along > blocked_at + 0.3:
 			continue
 		var off_aim := (to_item - direction * along).length()
@@ -157,6 +183,7 @@ func _build_hud() -> void:
 
 	_crosshair = Crosshair.new()
 	root.add_child(_crosshair)
+	# Zero-size control at the exact screen centre; Crosshair draws around its origin.
 	_crosshair.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
 	_crosshair.visible = false
 
@@ -183,6 +210,7 @@ func _update_prompt() -> void:
 	var text := "[%s] Take %s" % [action_key_text(interact_action), def.display_name]
 	if def.has_carry_limit():
 		text += "  %d/%d" % [inventory.total(def.id), def.max_carry]
+		# Full items show a non-actionable prompt instead of the key hint.
 		if inventory.is_full(def.id):
 			text = "%s  (can't carry more)" % def.display_name
 	_prompt.text = text
@@ -211,6 +239,7 @@ func _play(sound: AudioStream) -> void:
 		sfx.play(sound)
 
 
+# First key/mouse binding of an action as display text; used by all prompts and hints.
 static func action_key_text(action: StringName) -> String:
 	if not InputMap.has_action(action):
 		return "?"

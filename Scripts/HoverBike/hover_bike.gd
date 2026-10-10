@@ -1,7 +1,10 @@
+
+
 class_name HoverBike
 extends RigidBody3D
 
 enum CameraMode { FIRST_PERSON, THIRD_PERSON }
+
 
 @export_group("Input Actions")
 @export var mount_action: StringName = &"interact"
@@ -11,19 +14,22 @@ enum CameraMode { FIRST_PERSON, THIRD_PERSON }
 @export var right_action: StringName = &"move_right"
 @export var boost_action: StringName = &"jump"
 
+
 @export_group("Shape")
 @export var body_half_length := 1.0   ## hover ray spread front/back
 @export var body_half_width := 0.4    ## hover ray spread left/right
 @export var ray_length_multiplier := 2.5
 
+
 @export_group("Rider")
-## Where the player's origin (middle of the capsule) sits, relative to the bike.
+##Where the player sits relative to the bike.
 @export var seat_offset := Vector3(0, 0.5, 0.2)
 @export var dismount_offset := Vector3(-1.4, 0.4, 0)
 @export var mount_radius := 2.5
-@export_flags_3d_physics var mount_detect_mask := 1  ## must include the player's collision layer
-## Node on the rider that turns left/right for head look (PlayerCharacter uses "Neck").
+@export_flags_3d_physics var mount_detect_mask := 1  ##MUST!!! include the player's collision layer
+##Node on the rider that turns head or camera so it can look while riding
 @export var rider_neck_path: NodePath = ^"Neck"
+
 
 @export_group("Camera")
 @export var camera_mode: CameraMode = CameraMode.FIRST_PERSON
@@ -38,7 +44,10 @@ enum CameraMode { FIRST_PERSON, THIRD_PERSON }
 
 var rider: CharacterBody3D = null
 var chase_camera: Camera3D
+
+
 var base_fov := 75.0
+
 
 var _rays: Array[RayCast3D] = []
 var _seat: RemoteTransform3D
@@ -48,11 +57,14 @@ var _previous_camera: Camera3D
 var _rider_saved_process_mode := Node.PROCESS_MODE_INHERIT
 var _rider_camera: Camera3D
 var _rider_neck: Node3D
+
 var _look_yaw := 0.0
 var _look_pitch := 0.0
 var _mouse_sensitivity := 0.003
 
+
 var _ground_normal := Vector3.UP
+
 var _cam_forward := Vector3.FORWARD
 
 
@@ -65,6 +77,7 @@ func _ready() -> void:
 	_build_chase_camera()
 
 
+
 func stat(id: String):
 	return statistic_list.get_value_of(id)
 
@@ -72,8 +85,10 @@ func stat(id: String):
 func _physics_process(delta: float) -> void:
 	_read_input()
 	_update_hover()
+
 	statistic_list.set_value_of("forwardspeed", linear_velocity.dot(-global_basis.z))
 	_apply_stability(delta)
+
 	if rider != null and camera_mode == CameraMode.THIRD_PERSON:
 		_update_chase_camera(delta)
 
@@ -81,6 +96,7 @@ func _physics_process(delta: float) -> void:
 func _read_input() -> void:
 	if rider == null:
 		return
+
 	statistic_list.set_value_of("inputdirection", Vector2(
 		Input.get_axis(left_action, right_action),
 		Input.get_axis(brake_action, throttle_action)
@@ -94,23 +110,29 @@ func _update_hover() -> void:
 	var damping: float = stat("springdamping")
 	var up := global_basis.y
 	var g: float = ProjectSettings.get_setting("physics/3d/default_gravity", 9.8) * gravity_scale
+
 	var n := float(_rays.size())
 	var grounded := false
 	var normal_sum := Vector3.ZERO
 
 	for r in _rays:
+
 		r.target_position = Vector3.DOWN * hover_height * ray_length_multiplier
 		if not r.is_colliding():
 			continue
 		grounded = true
+
 		normal_sum += r.get_collision_normal()
 
 		var origin := r.global_position
+
 		var compression := hover_height - origin.distance_to(r.get_collision_point())
 		var offset := origin - global_position
+
 		var point_vel := linear_velocity + angular_velocity.cross(offset)
 		var up_speed := point_vel.dot(up)
 
+		
 		var force := (g + compression * spring - up_speed * damping) * mass / n
 		apply_force(up * maxf(force, 0.0), offset)
 
@@ -126,10 +148,14 @@ func _apply_stability(delta: float) -> void:
 
 	var yaw_rate := angular_velocity.dot(up)
 	var fwd_speed: float = stat("forwardspeed")
+
 	var lean := -clampf(atan(fwd_speed * yaw_rate / g), -max_lean, max_lean)
 
+
 	var target_up := _ground_normal.rotated(forward, lean)
+
 	angular_velocity += up.cross(target_up) * float(stat("uprightstrength")) * delta
+
 
 	var tilt_part := angular_velocity - up * angular_velocity.dot(up)
 	angular_velocity -= tilt_part * clampf(float(stat("uprightdamping")) * delta, 0.0, 1.0)
@@ -178,8 +204,10 @@ func apply_steering(delta: float, control := 1.0, direction := 1.0) -> void:
 	var steer: float = stat("inputdirection").x
 	var fwd_speed: float = stat("forwardspeed")
 	var speed_factor := clampf(absf(fwd_speed) / 5.0, 0.3, 1.0)
+
 	var target_yaw := -steer * float(stat("turnspeed")) * speed_factor * direction
 	var current_yaw := angular_velocity.dot(up)
+
 	var response := clampf(float(stat("turnresponse")) * delta * control, 0.0, 1.0)
 	angular_velocity += up * (target_yaw - current_yaw) * response
 

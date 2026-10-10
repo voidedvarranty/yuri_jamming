@@ -1,3 +1,13 @@
+# InventoryItem - component that marks its parent Node3D as an inventory item.
+#
+# Contract: must be a DIRECT!!!!!!!!!!!!!!!!! child of the item scene's root, and the scene should be
+# saved under ItemDatabase.ITEM_FOLDERS so it is auto-registered (needed for crafting
+# results and for drop/re-instancing). All data here is copied into an ItemDefinition;
+# this node has no runtime behaviour of its own (@tool only for configuration warnings).
+#
+# Identity: item_id if set, otherwise the scene files basename in snake_case
+# (rock.tscn -> &"rock"), otherwise the root nodes name
+
 @tool
 class_name InventoryItem
 extends Node
@@ -11,6 +21,7 @@ extends Node
 ## Untick for items that should only exist in the inventory (or can't be taken yet).
 @export var can_pick_up: bool = true
 
+# Left-click 'use' behaviour in the inventory (applied by Inventory.use_item).
 @export_group("Using")
 ## Player statistics changed when the item is used from the inventory (left click),
 ## e.g. "health": 10. Only statistics that exist in the player's StatisticList change.
@@ -18,6 +29,7 @@ extends Node
 ## Remove one from the inventory each time it is used (food, medicine...).
 @export var consume_on_use: bool = true
 
+# How ItemHand presents the item when equipped.
 @export_group("In Hand")
 ## Can this be held in the hand (left click in the inventory)?
 @export var can_hold: bool = true
@@ -28,6 +40,7 @@ extends Node
 ## Size in the hand (big items are shrunk to fit first).
 @export_range(0.1, 3.0, 0.05) var hand_scale: float = 1.0
 
+# Applied after the inventory screen auto-fits the model to its slot.
 @export_group("Inventory Look")
 ## Extra size on the inventory mat. Models are auto-fitted first, so 1.0 is usually right.
 @export_range(0.1, 3.0, 0.05) var inventory_scale: float = 1.0
@@ -35,6 +48,7 @@ extends Node
 @export var inventory_rotation: Vector3 = Vector3.ZERO
 
 
+# The world object that gets freed on pickup / instanced for display.
 func get_item_root() -> Node3D:
 	return get_parent() as Node3D
 
@@ -45,6 +59,7 @@ func get_item_id() -> StringName:
 	var root := get_parent()
 	if root == null:
 		return &"unknown_item"
+	# Prefer the scene file name so every instance of the same scene shares one id.
 	if root.scene_file_path != "":
 		return StringName(root.scene_file_path.get_file().get_basename().to_snake_case())
 	return StringName(String(root.name).to_snake_case())
@@ -56,6 +71,8 @@ func get_display_name() -> String:
 	return String(get_item_id()).capitalize()
 
 
+# Resolves a physics collider to its InventoryItem: checks the node's children, then up to
+# three ancestors (covers colliders nested a few levels under the item root).
 static func find_on(node: Node) -> InventoryItem:
 	var depth := 0
 	while node != null and depth < 4:
@@ -72,6 +89,7 @@ func _get_configuration_warnings() -> PackedStringArray:
 	var root := get_parent()
 	if not root is Node3D:
 		warnings.append("InventoryItem must be a direct child of a 3D object (Node3D, RigidBody3D, StaticBody3D...).")
+	# Soft warning only: inline items still work via ItemDefinition.template.
 	elif Engine.is_editor_hint() and is_inside_tree() and root != get_tree().edited_scene_root:
 		warnings.append("Tip: put InventoryItem under the ROOT of the item's own scene and save it in res://Scenes/Items/, so it can be crafted and dropped.")
 	return warnings

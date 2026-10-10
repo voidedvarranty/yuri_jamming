@@ -1,4 +1,4 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://b1to68tgil768"]
 
 [ext_resource type="Script" uid="uid://bjpxe761xpjaw" path="res://Scripts/HoverBike/hover_bike.gd" id="1_bike"]
 [ext_resource type="Script" uid="uid://d3qr47m0eltso" path="res://Scripts/Logic/StatisticsList/statistics_list_scr.gd" id="2_list"]
@@ -25,180 +25,179 @@ size = Vector3(0.6, 0.35, 0.5)
 [sub_resource type="StandardMaterial3D" id="Mat_nose"]
 albedo_color = Color(1, 0.45, 0.1, 1)
 
-[node name="HoverBike" type="RigidBody3D"]
+[node name="HoverBike" type="RigidBody3D" unique_id=1689250176]
 script = ExtResource("1_bike")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1323943490]
 shape = SubResource("BoxShape3D_bike")
 
-[node name="Body" type="MeshInstance3D" parent="."]
+[node name="Body" type="MeshInstance3D" parent="." unique_id=1588473018]
 mesh = SubResource("BoxMesh_body")
 
-[node name="Nose" type="MeshInstance3D" parent="."]
+[node name="Nose" type="MeshInstance3D" parent="." unique_id=168250186]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, -0.9)
 mesh = SubResource("BoxMesh_nose")
 surface_material_override/0 = SubResource("Mat_nose")
 
-[node name="StatisticList" type="Node" parent="."]
+[node name="StatisticList" type="Node" parent="." unique_id=571808679]
 script = ExtResource("2_list")
 metadata/_custom_type_script = "uid://d3qr47m0eltso"
 
-[node name="HoverHeight" type="Node" parent="StatisticList"]
+[node name="HoverHeight" type="Node" parent="StatisticList" unique_id=665769896]
 script = ExtResource("3_num")
 statistic_value = 0.8
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="SpringStrength" type="Node" parent="StatisticList"]
+[node name="SpringStrength" type="Node" parent="StatisticList" unique_id=587411027]
 script = ExtResource("3_num")
 statistic_value = 45.0
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="SpringDamping" type="Node" parent="StatisticList"]
+[node name="SpringDamping" type="Node" parent="StatisticList" unique_id=712617864]
 script = ExtResource("3_num")
 statistic_value = 8.0
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="EngineAccel" type="Node" parent="StatisticList"]
+[node name="EngineAccel" type="Node" parent="StatisticList" unique_id=214136432]
 script = ExtResource("3_num")
 statistic_value = 25.0
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="ReverseAccel" type="Node" parent="StatisticList"]
+[node name="ReverseAccel" type="Node" parent="StatisticList" unique_id=1744032377]
 script = ExtResource("3_num")
 statistic_value = 12.0
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="BrakeForce" type="Node" parent="StatisticList"]
+[node name="BrakeForce" type="Node" parent="StatisticList" unique_id=1346581663]
 script = ExtResource("3_num")
 statistic_value = 35.0
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="MaxReverseSpeed" type="Node" parent="StatisticList"]
+[node name="MaxReverseSpeed" type="Node" parent="StatisticList" unique_id=2136714039]
 script = ExtResource("3_num")
 statistic_value = 8.0
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="BoostMultiplier" type="Node" parent="StatisticList"]
+[node name="BoostMultiplier" type="Node" parent="StatisticList" unique_id=1705811710]
 script = ExtResource("3_num")
 statistic_value = 1.8
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="MaxSpeed" type="Node" parent="StatisticList"]
+[node name="MaxSpeed" type="Node" parent="StatisticList" unique_id=1591279648]
 script = ExtResource("3_num")
 statistic_value = 30.0
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="TurnSpeed" type="Node" parent="StatisticList"]
+[node name="TurnSpeed" type="Node" parent="StatisticList" unique_id=1371133236]
 script = ExtResource("3_num")
 statistic_value = 2.2
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="TurnResponse" type="Node" parent="StatisticList"]
+[node name="TurnResponse" type="Node" parent="StatisticList" unique_id=1069630101]
 script = ExtResource("3_num")
 statistic_value = 8.0
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="LateralGrip" type="Node" parent="StatisticList"]
+[node name="LateralGrip" type="Node" parent="StatisticList" unique_id=17584953]
 script = ExtResource("3_num")
 statistic_value = 3.0
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="IdleDrag" type="Node" parent="StatisticList"]
+[node name="IdleDrag" type="Node" parent="StatisticList" unique_id=2096098545]
 script = ExtResource("3_num")
 statistic_value = 0.6
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="AirControl" type="Node" parent="StatisticList"]
+[node name="AirControl" type="Node" parent="StatisticList" unique_id=1198126747]
 script = ExtResource("3_num")
 statistic_value = 0.2
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="UprightStrength" type="Node" parent="StatisticList"]
+[node name="UprightStrength" type="Node" parent="StatisticList" unique_id=808570623]
 script = ExtResource("3_num")
 statistic_value = 10.0
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="UprightDamping" type="Node" parent="StatisticList"]
+[node name="UprightDamping" type="Node" parent="StatisticList" unique_id=305149080]
 script = ExtResource("3_num")
 statistic_value = 6.0
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="LeanAngle" type="Node" parent="StatisticList"]
+[node name="LeanAngle" type="Node" parent="StatisticList" unique_id=335906133]
 script = ExtResource("3_num")
 statistic_value = 0.35
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="MaxDismountSpeed" type="Node" parent="StatisticList"]
+[node name="MaxDismountSpeed" type="Node" parent="StatisticList" unique_id=931567399]
 script = ExtResource("3_num")
 statistic_value = 8.0
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="ForwardSpeed" type="Node" parent="StatisticList"]
+[node name="ForwardSpeed" type="Node" parent="StatisticList" unique_id=1845884702]
 script = ExtResource("3_num")
 hide_in_list = true
-statistic_value = 0.0
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
-[node name="Grounded" type="Node" parent="StatisticList"]
+[node name="Grounded" type="Node" parent="StatisticList" unique_id=517268651]
 script = ExtResource("4_bool")
 hide_in_list = true
 metadata/_custom_type_script = "uid://m8clerky6nmt"
 
-[node name="Boosting" type="Node" parent="StatisticList"]
+[node name="Boosting" type="Node" parent="StatisticList" unique_id=1462087234]
 script = ExtResource("4_bool")
 hide_in_list = true
 metadata/_custom_type_script = "uid://m8clerky6nmt"
 
-[node name="InputDirection" type="Node" parent="StatisticList"]
+[node name="InputDirection" type="Node" parent="StatisticList" unique_id=1157280834]
 script = ExtResource("5_vec2")
 hide_in_list = true
 locked = false
 metadata/_custom_type_script = "uid://e8unvn1lpxnh"
 
-[node name="StateEngine" type="Node" parent="." node_paths=PackedStringArray("initial_state", "actor")]
+[node name="StateEngine" type="Node" parent="." unique_id=1019498694 node_paths=PackedStringArray("initial_state", "actor")]
 script = ExtResource("6_engine")
 initial_state = NodePath("Parked")
 actor = NodePath("..")
 metadata/_custom_type_script = "uid://butxpb03fjp7b"
 
-[node name="Parked" type="Node" parent="StateEngine"]
+[node name="Parked" type="Node" parent="StateEngine" unique_id=1471117133]
 script = ExtResource("7_parked")
 
-[node name="RiddenStateEngine" type="Node" parent="StateEngine" node_paths=PackedStringArray("initial_state")]
+[node name="RiddenStateEngine" type="Node" parent="StateEngine" unique_id=1511890407 node_paths=PackedStringArray("initial_state")]
 script = ExtResource("6_engine")
 initial_state = NodePath("Cruising")
 metadata/_custom_type_script = "uid://butxpb03fjp7b"
 
-[node name="Cruising" type="Node" parent="StateEngine/RiddenStateEngine"]
+[node name="Cruising" type="Node" parent="StateEngine/RiddenStateEngine" unique_id=1928268494]
 script = ExtResource("8_cruising")
 
-[node name="Boosting" type="Node" parent="StateEngine/RiddenStateEngine"]
+[node name="Boosting" type="Node" parent="StateEngine/RiddenStateEngine" unique_id=2113696592]
 script = ExtResource("9_boosting")
 
-[node name="Braking" type="Node" parent="StateEngine/RiddenStateEngine"]
+[node name="Braking" type="Node" parent="StateEngine/RiddenStateEngine" unique_id=1437768854]
 script = ExtResource("11_braking")
 
-[node name="Reversing" type="Node" parent="StateEngine/RiddenStateEngine"]
+[node name="Reversing" type="Node" parent="StateEngine/RiddenStateEngine" unique_id=1357843365]
 script = ExtResource("12_reversing")
 
-[node name="Airborne" type="Node" parent="StateEngine/RiddenStateEngine"]
+[node name="Airborne" type="Node" parent="StateEngine/RiddenStateEngine" unique_id=697039924]
 script = ExtResource("10_airborne")

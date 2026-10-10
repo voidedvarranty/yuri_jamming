@@ -1,9 +1,13 @@
+# StatisticString - text statistic. With check_limits on, values longer than max_length are truncated.
+# min_length is exposed but not enforced; must_contain / cant_contain are reserved and currently unused.
+
 @tool
 class_name StatisticString extends Statistic
 
 @export_group("statistic value")
 @export var statistic_value: String : set = _set_statistic_value
 
+# 0 = unlimited. Both lengths are clamped to >= 0 and re-applied on change.
 var max_length: int : set = set_max_length
 var min_length: int : set = set_min_length
 
@@ -21,6 +25,7 @@ func set_max_length(new_value: int) -> void:
 func _set_statistic_value(new_value: String) -> void:
 	var old_value: String = statistic_value
 
+	# Truncate (not reject) over-long text; skipped during scene load.
 	if check_limits and is_node_ready() and max_length > 0 and new_value.length() > max_length:
 		new_value = new_value.substr(0, max_length)
 

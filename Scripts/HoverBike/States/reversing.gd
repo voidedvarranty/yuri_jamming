@@ -1,3 +1,7 @@
+# Reversing - brake held from standstill. Drives backwards up to MaxReverseSpeed.
+# Steering is inverted when invert_steering is on (car-style). Any non-negative throttle
+# hands control back to Cruising, whose engine/coast forces then brake the backward roll.
+
 extends State
 
 ## true = steers like a car in reverse (press right, the nose swings left).
@@ -16,4 +20,5 @@ func physics_update(delta: float) -> void:
 
 	context.apply_reverse()
 	context.apply_grip()
+	# Inversion is state-driven rather than speed-driven to avoid flipping mid-manoeuvre.
 	context.apply_steering(delta, 1.0, -1.0 if invert_steering else 1.0)
