@@ -40,13 +40,13 @@ metadata/_custom_type_script = "uid://bh8k7ej1xj8p3"
 
 [node name="MovementSpeed" type="Node" parent="StatisticList" unique_id=871578558]
 script = ExtResource("4_eb1wa")
-statistic_value = 1.0
+statistic_value = 5.0
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
 [node name="JumpHeight" type="Node" parent="StatisticList" unique_id=632840306]
 script = ExtResource("4_eb1wa")
-statistic_value = 10.0
+statistic_value = 4.0
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
@@ -71,7 +71,7 @@ metadata/_custom_type_script = "uid://bi405jf26703l"
 
 [node name="Gravity" type="Node" parent="StatisticList" unique_id=1370233457]
 script = ExtResource("4_eb1wa")
-statistic_value = 6.0
+statistic_value = 12.0
 locked = false
 metadata/_custom_type_script = "uid://bi405jf26703l"
 
