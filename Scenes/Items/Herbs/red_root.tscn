@@ -12,7 +12,7 @@ material = SubResource("StandardMaterial3D_ann3d")
 height = 1.9604492
 
 [node name="RedRoot" type="RigidBody3D" unique_id=56335192]
-mass = 0.1
+mass = 0.3
 
 [node name="Root" type="MeshInstance3D" parent="." unique_id=2029255781]
 transform = Transform3D(0.10314989, 0, 0, 0, 0.0008640429, 0.10314627, 0, -0.10314627, 0.0008640429, 0, 0, 0)
