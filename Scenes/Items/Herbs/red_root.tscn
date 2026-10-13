@@ -25,7 +25,7 @@ shape = SubResource("CapsuleShape3D_f4dqj")
 [node name="InventoryItem" type="Node" parent="." unique_id=814408331]
 script = ExtResource("1_tauqg")
 display_name = "Red Root"
-description = "A rare brown wooded root. Has healing properties."
+description = "A rare brown wooded root. It feels rough and smells of earth. Has healing properties."
 use_effects = Dictionary[String, float]({
 "health": 5.0
 })

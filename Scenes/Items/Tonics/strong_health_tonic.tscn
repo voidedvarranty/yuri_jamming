@@ -33,7 +33,7 @@ shape = SubResource("SphereShape3D_j5yut")
 [node name="InventoryItem" type="Node" parent="." unique_id=814408331]
 script = ExtResource("1_e2h7c")
 display_name = "Strong Health Tonic"
-description = "A potion concocted from ingredients with healing properties. Restores a great amount of health."
+description = "A tonic concocted from ingredients with healing properties. Restores a great amount of health."
 use_effects = Dictionary[String, float]({
 "health": 25.0
 })
@@ -41,6 +41,6 @@ use_effects = Dictionary[String, float]({
 [node name="CraftingRecipe" type="Node" parent="InventoryItem" unique_id=1858181806]
 script = ExtResource("2_31kcn")
 ingredients = Dictionary[PackedScene, int]({
-ExtResource("3_hpy3l"): 1,
-ExtResource("4_tbw0i"): 1
+ExtResource("4_tbw0i"): 1,
+ExtResource("3_hpy3l"): 1
 })
