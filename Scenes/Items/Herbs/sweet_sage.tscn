@@ -1,0 +1,48 @@
+[gd_scene format=3 uid="uid://c654wuvkkey64"]
+
+[ext_resource type="Script" uid="uid://cj6lgkn3f08hf" path="res://Scripts/Inventory/inventory_item.gd" id="1_rektc"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_f4dqj"]
+albedo_color = Color(0.59607846, 0, 1, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_rektc"]
+material = SubResource("StandardMaterial3D_f4dqj")
+top_radius = 0.25
+bottom_radius = 0.25
+height = 0.05
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y0occ"]
+albedo_color = Color(0, 0.47058824, 0, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_nq5bw"]
+material = SubResource("StandardMaterial3D_y0occ")
+top_radius = 0.25
+bottom_radius = 0.25
+height = 1.0
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_rektc"]
+height = 0.45654297
+radius = 0.125
+
+[node name="SweetSage" type="RigidBody3D" unique_id=464753602]
+mass = 0.1
+
+[node name="Flower" type="MeshInstance3D" parent="." unique_id=584030233]
+transform = Transform3D(0.45098203, 0, 0, 0, 0.11389936, -0.43636194, 0, 0.43636194, 0.11389936, 5.9604645e-08, 0.0489979, 0.07957545)
+mesh = SubResource("CylinderMesh_rektc")
+
+[node name="Stem" type="MeshInstance3D" parent="." unique_id=829879128]
+transform = Transform3D(0.049, 0, 0, 0, 1.796538e-08, -0.049, 0, -0.411, -2.141858e-09, 0.002996087, 0.043909512, -0.12340969)
+mesh = SubResource("CylinderMesh_nq5bw")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1472390328]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.045591507, -0.11199951)
+shape = SubResource("CylinderShape3D_rektc")
+
+[node name="InventoryItem" type="Node" parent="." unique_id=1668656254]
+script = ExtResource("1_rektc")
+display_name = "Sweet Sage"
+description = "A rare delicate purple flower that's been used as medicine since ancient times. Has healing properties."
+use_effects = Dictionary[String, float]({
+"health": 5.0
+})

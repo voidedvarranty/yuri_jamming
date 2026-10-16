@@ -1,7 +1,10 @@
 [gd_scene format=3 uid="uid://ccsuopn7psx67"]
 
+[ext_resource type="PackedScene" uid="uid://do6ebhlujgwjl" path="res://Scenes/Items/Herbs/red_root.tscn" id="1_64eek"]
 [ext_resource type="PackedScene" uid="uid://0aw6o2kqpo31" path="res://Scenes/PlayerCharacter/PlayerCharacter.tscn" id="1_crda1"]
 [ext_resource type="PackedScene" uid="uid://b1to68tgil768" path="res://Scenes/HoverBike/hover_bike.tscn" id="2_20p6p"]
+[ext_resource type="PackedScene" uid="uid://c654wuvkkey64" path="res://Scenes/Items/Herbs/sweet_sage.tscn" id="2_ifawy"]
+[ext_resource type="PackedScene" uid="uid://dtmo37gt6tr8n" path="res://Scenes/Items/Herbs/yellow_murrow.tscn" id="3_3nfyh"]
 [ext_resource type="PackedScene" uid="uid://dos85sg0uguby" path="res://Scenes/Levels/Desert/desert.tscn" id="8_b7y51"]
 [ext_resource type="PackedScene" path="res://Scenes/Items/berries.tscn" id="23_berries"]
 
@@ -26,6 +29,24 @@ environment = SubResource("Environment_6slml")
 transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
 shadow_enabled = true
 
+[node name="RedRoot" parent="." unique_id=56335192 instance=ExtResource("1_64eek")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1878839, 0.20988703, -3.4124522)
+
+[node name="YellowMurrow" parent="." unique_id=1456521085 instance=ExtResource("3_3nfyh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9013362, 0.17105532, -2.2134795)
+
+[node name="SweetSage" parent="." unique_id=464753602 instance=ExtResource("2_ifawy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.16628492, 0.19249523, -3.4319706)
+
+[node name="RedRoot2" parent="." unique_id=1267362774 instance=ExtResource("1_64eek")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0215989, 0.40238225, -6.844423)
+
+[node name="YellowMurrow2" parent="." unique_id=1457407306 instance=ExtResource("3_3nfyh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7350513, 0.36355054, -5.64545)
+
+[node name="SweetSage2" parent="." unique_id=51766176 instance=ExtResource("2_ifawy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.33256984, 0.38499045, -6.863941)
+
 [node name="Berries1" parent="." unique_id=612869060 instance=ExtResource("23_berries")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 1.3, -1.5)
 
@@ -36,4 +57,4 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0920634, 3.4132247, 1.18581
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5409789, 2.7339582)
 
 [node name="Desert" parent="." unique_id=386311619 instance=ExtResource("8_b7y51")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -25.294289, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10.260713, 0)

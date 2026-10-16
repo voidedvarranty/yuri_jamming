@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://do6ebhlujgwjl"]
+
+[ext_resource type="Script" uid="uid://cj6lgkn3f08hf" path="res://Scripts/Inventory/inventory_item.gd" id="1_tauqg"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ann3d"]
+albedo_color = Color(0.5594686, 0.08545696, 0, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_y0occ"]
+material = SubResource("StandardMaterial3D_ann3d")
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_f4dqj"]
+height = 1.9604492
+
+[node name="RedRoot" type="RigidBody3D" unique_id=56335192]
+mass = 0.3
+
+[node name="Root" type="MeshInstance3D" parent="." unique_id=2029255781]
+transform = Transform3D(0.10314989, 0, 0, 0, 0.0008640429, 0.10314627, 0, -0.10314627, 0.0008640429, 0, 0, 0)
+mesh = SubResource("CapsuleMesh_y0occ")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=463130308]
+transform = Transform3D(0.110839695, 0, 0, 0, -4.844957e-09, 0.110839695, 0, -0.110839695, -4.844957e-09, 0, 0, 0)
+shape = SubResource("CapsuleShape3D_f4dqj")
+
+[node name="InventoryItem" type="Node" parent="." unique_id=814408331]
+script = ExtResource("1_tauqg")
+display_name = "Red Root"
+description = "A rare brown wooded root. It feels rough and smells of earth. Has healing properties."
+use_effects = Dictionary[String, float]({
+"health": 5.0
+})
