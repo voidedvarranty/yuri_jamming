@@ -1,14 +1,17 @@
 # ItemHand - first-person held item and inspect mode.
 #
-# Node chain (built at runtime): HandRig -> Hand -> Grip -> InspectPivot -> item instance.
-#   HandRig  copies the camera's global transform in NORMAL mode. During inspect it is pinned
-#            to the camera transform captured at the start, so rotating the camera does not
-#            drag the hand along (the camera never "chases" the moving hand).
-#   Hand     tweened between rest_offset and inspect_offset.
-#   Grip     item anchor (a node named "Grip" inside hand_scene if provided).
-#   Pivot    accumulates the free inspect rotation; tweened back to identity on exit.
+# The rig is a scene (hand_rig.tscn) placed under the player's Camera3D so it can be laid out
+# in the editor relative to the view:
+#   HandRig       made top_level at runtime. Copies the camera's global transform in NORMAL mode;
+#                 during inspect it is pinned to the camera transform captured at the start, so
+#                 rotating the camera does not drag the hand along.
+#   RestPoint     Marker3D: hand transform while holding.
+#   InspectPoint  Marker3D: hand transform while inspecting.
+#   Hand          tweened between the two markers. Contains the arm model (replaceable).
+#   Grip          item anchor, anywhere under Hand.
+#   InspectPivot  child of Grip; accumulates the free inspect rotation, tweened back on exit.
 #
-# Inspect enter: compute where the item centre WILL be once the hand reaches inspect_offset,
+# Inspect enter: compute where the item centre WILL be once the hand reaches InspectPoint,
 # derive the camera rotation that centres that point, then tween hand + camera in parallel.
 # Inspect exit: tween pivot, hand and camera back together. The player's physics is
 # suspended meanwhile (stops movement, pitch clamping and head bob), and mouse motion is
@@ -23,9 +26,8 @@ enum Mode { NORMAL, ENTERING, INSPECTING, LEAVING }
 @export var inventory: Inventory
 ## Leave empty to use the first Camera3D found in the player.
 @export var camera: Camera3D
-## Your own hand/arm model (optional). Add a Node3D called "Grip" where the item should sit.
-## Leave empty for a simple placeholder arm.
-@export var hand_scene: PackedScene
+## The hand rig (hand_rig.tscn). Leave empty to use a child named "HandRig" of the camera.
+@export var rig: Node3D
 
 @export_group("Input")
 @export var inspect_action: StringName = &"inspect_item"
@@ -33,18 +35,10 @@ enum Mode { NORMAL, ENTERING, INSPECTING, LEAVING }
 @export var drop_action: StringName = &"drop_item"
 
 @export_group("Hand")
-## Where the hand rests, relative to the camera (x = right, y = up, -z = forward).
-@export var rest_offset := Vector3(0.28, -0.26, -0.5)
-@export var rest_rotation_degrees := Vector3(0.0, -8.0, 0.0)
 ## Held items bigger than this (metres) are shrunk to fit the hand.
 @export var max_item_size: float = 0.45
-@export var hand_color := Color(0.87, 0.68, 0.54)
 
 @export_group("Inspect")
-## Where the hand goes while inspecting - "a bit to the centre". The camera turns
-## the rest of the way so the item ends up in the middle of the screen.
-@export var inspect_offset := Vector3(0.12, -0.13, -0.42)
-@export var inspect_rotation_degrees := Vector3(0.0, 0.0, 0.0)
 @export var transition_time: float = 0.35
 @export var rotate_sensitivity: float = 0.01
 ## Stops the player walking (and the head bobbing) while inspecting.
@@ -54,12 +48,14 @@ var mode: Mode = Mode.NORMAL
 var held_id: StringName = &""
 
 var _player: Node
-var _rig: Node3D
 var _hand: Node3D
 var _grip: Node3D
 var _pivot: Node3D
 var _item_node: Node3D
 var _tween: Tween
+# Hand transforms read from the RestPoint / InspectPoint markers.
+var _rest := Transform3D.IDENTITY
+var _inspect := Transform3D.IDENTITY
 # Rig anchor during inspect, and the camera rotation to restore on exit.
 var _frozen_camera_transform := Transform3D.IDENTITY
 var _camera_rest := Quaternion.IDENTITY
@@ -79,7 +75,13 @@ func _ready() -> void:
 			camera = found
 			break
 
-	_build_rig()
+	if rig == null and camera != null:
+		rig = camera.get_node_or_null("HandRig") as Node3D
+	if not _setup_rig():
+		set_process(false)
+		set_process_input(false)
+		set_process_unhandled_input(false)
+		return
 
 	if inventory != null:
 		inventory.equipped_changed.connect(_on_equipped_changed)
@@ -88,24 +90,24 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
-	if camera == null or not _rig.visible:
+	if camera == null or not rig.visible:
 		return
 	# Updated in _process so the rig matches the camera at render rate.
 	if mode == Mode.NORMAL:
-		_rig.global_transform = camera.global_transform
+		rig.global_transform = camera.global_transform
 	else:
-		_rig.global_transform = _frozen_camera_transform
+		rig.global_transform = _frozen_camera_transform
 
 
 func _notification(what: int) -> void:
 	# Owner disabled (e.g. mounted on the hover bike): abort inspect and hide the rig.
 	if what == NOTIFICATION_DISABLED:
 		_end_inspect_now()
-		if _rig != null:
-			_rig.visible = false
+		if rig != null:
+			rig.visible = false
 	elif what == NOTIFICATION_ENABLED:
-		if _rig != null:
-			_rig.visible = held_id != &""
+		if rig != null:
+			rig.visible = held_id != &""
 
 
 func _input(event: InputEvent) -> void:
@@ -157,10 +159,10 @@ func start_inspect() -> void:
 
 	_frozen_camera_transform = camera.global_transform
 	_camera_rest = camera.quaternion
-	_rig.global_transform = _frozen_camera_transform
+	rig.global_transform = _frozen_camera_transform
 
 	# 1. Target hand transform and the grip's offset within the hand (works for nested Grip nodes).
-	var hand_end := Transform3D(Basis.from_euler(_degrees_to_radians(inspect_rotation_degrees)), inspect_offset)
+	var hand_end := _inspect
 	var grip_in_hand := _hand.global_transform.affine_inverse() * _grip.global_transform
 	# Item centre in grip/pivot space (pivot rotation is identity in NORMAL mode).
 	var item_center_local := Vector3.ZERO
@@ -176,8 +178,8 @@ func start_inspect() -> void:
 
 	# 3. Parallel tweens; mode switches to INSPECTING when they finish.
 	_new_tween()
-	_tween.tween_property(_hand, "position", inspect_offset, transition_time)
-	_tween.tween_property(_hand, "quaternion", Quaternion.from_euler(_degrees_to_radians(inspect_rotation_degrees)), transition_time)
+	_tween.tween_property(_hand, "position", _inspect.origin, transition_time)
+	_tween.tween_property(_hand, "quaternion", _inspect.basis.get_rotation_quaternion(), transition_time)
 	_tween.tween_method(_blend_camera.bind(_camera_rest, camera_target), 0.0, 1.0, transition_time)
 	_tween.chain().tween_callback(func() -> void: mode = Mode.INSPECTING)
 
@@ -189,8 +191,8 @@ func stop_inspect() -> void:
 	mode = Mode.LEAVING
 	_new_tween()
 	_tween.tween_property(_pivot, "quaternion", Quaternion.IDENTITY, transition_time)
-	_tween.tween_property(_hand, "position", rest_offset, transition_time)
-	_tween.tween_property(_hand, "quaternion", Quaternion.from_euler(_degrees_to_radians(rest_rotation_degrees)), transition_time)
+	_tween.tween_property(_hand, "position", _rest.origin, transition_time)
+	_tween.tween_property(_hand, "quaternion", _rest.basis.get_rotation_quaternion(), transition_time)
 	_tween.tween_method(_blend_camera.bind(camera.quaternion, _camera_rest), 0.0, 1.0, transition_time)
 	_tween.chain().tween_callback(_finish_inspect)
 
@@ -214,8 +216,7 @@ func _end_inspect_now() -> void:
 	if camera != null:
 		camera.quaternion = _camera_rest
 	_pivot.quaternion = Quaternion.IDENTITY
-	_hand.position = rest_offset
-	_hand.quaternion = Quaternion.from_euler(_degrees_to_radians(rest_rotation_degrees))
+	_hand.transform = _rest
 	_finish_inspect()
 
 
@@ -252,12 +253,12 @@ func _on_equipped_changed(id: StringName) -> void:
 		def = inventory.get_definition(id)
 	if def == null:
 		held_id = &""
-		_rig.visible = false
+		rig.visible = false
 		return
 
 	var node := def.instantiate()
 	if node == null:
-		_rig.visible = false
+		rig.visible = false
 		return
 	# Display copy: no scripts, and the body is removed from the physics space (doesn't block raycasts).
 	node.process_mode = Node.PROCESS_MODE_DISABLED
@@ -265,7 +266,7 @@ func _on_equipped_changed(id: StringName) -> void:
 	_fit_item(node, def)
 	_no_shadows(node)
 	_item_node = node
-	_rig.visible = true
+	rig.visible = true
 
 
 func _on_inventory_opened() -> void:
@@ -312,63 +313,34 @@ func _no_shadows(node: Node) -> void:
 		(node as GeometryInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 
 
-func _build_rig() -> void:
-	_rig = Node3D.new()
-	_rig.name = "HandRig"
-	_rig.top_level = true
-	_rig.visible = false
-	add_child(_rig)
-
-	_hand = Node3D.new()
-	_hand.name = "Hand"
-	_hand.position = rest_offset
-	_hand.rotation = _degrees_to_radians(rest_rotation_degrees)
-	_rig.add_child(_hand)
-
-	var model: Node3D = null
-	if hand_scene != null:
-		model = hand_scene.instantiate() as Node3D
-	# Placeholder arm when no hand_scene is set (or it isn't a Node3D).
-	if model == null:
-		model = _make_placeholder_arm()
-	_hand.add_child(model)
-	_no_shadows(model)
-
-	# Use the model's own Grip node if it has one.
-	_grip = model.find_child("Grip", true, false) as Node3D
+# Resolves the rig's nodes. Marker transforms are captured once; move the markers in the
+# editor to change the hold / inspect poses.
+func _setup_rig() -> bool:
+	if rig == null:
+		push_error("ItemHand: no hand rig. Add hand_rig.tscn under the player's camera, or set `rig`.")
+		return false
+	_hand = rig.get_node_or_null("Hand") as Node3D
+	var rest_point := rig.get_node_or_null("RestPoint") as Node3D
+	var inspect_point := rig.get_node_or_null("InspectPoint") as Node3D
+	if _hand == null or rest_point == null or inspect_point == null:
+		push_error("ItemHand: the rig needs Hand, RestPoint and InspectPoint nodes.")
+		return false
+	_grip = _hand.find_child("Grip", true, false) as Node3D
 	if _grip == null:
-		_grip = Node3D.new()
-		_grip.name = "Grip"
-		_hand.add_child(_grip)
+		push_error("ItemHand: no node named Grip under the rig's Hand.")
+		return false
+	_pivot = _grip.get_node_or_null("InspectPivot") as Node3D
+	if _pivot == null:
+		push_error("ItemHand: Grip needs an InspectPivot child.")
+		return false
 
-	_pivot = Node3D.new()
-	_pivot.name = "InspectPivot"
-	_grip.add_child(_pivot)
-
-
-func _make_placeholder_arm() -> Node3D:
-	var arm := Node3D.new()
-	arm.name = "PlaceholderArm"
-	var material := StandardMaterial3D.new()
-	material.albedo_color = hand_color
-	material.roughness = 0.9
-
-	var fist_mesh := BoxMesh.new()
-	fist_mesh.size = Vector3(0.09, 0.08, 0.1)
-	fist_mesh.material = material
-	var fist := MeshInstance3D.new()
-	fist.mesh = fist_mesh
-	fist.position = Vector3(0.0, -0.05, 0.02)
-	arm.add_child(fist)
-
-	var forearm_mesh := BoxMesh.new()
-	forearm_mesh.size = Vector3(0.065, 0.065, 0.34)
-	forearm_mesh.material = material
-	var forearm := MeshInstance3D.new()
-	forearm.mesh = forearm_mesh
-	forearm.position = Vector3(0.02, -0.07, 0.22)
-	arm.add_child(forearm)
-	return arm
+	_rest = rest_point.transform
+	_inspect = inspect_point.transform
+	_hand.transform = _rest
+	# The rig sits under the camera in the editor for layout; at runtime it is positioned manually.
+	rig.top_level = true
+	rig.visible = false
+	return true
 
 
 func _degrees_to_radians(degrees: Vector3) -> Vector3:

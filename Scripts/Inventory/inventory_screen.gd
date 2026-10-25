@@ -1,11 +1,14 @@
 # InventoryScreen - The Forest-style 3D inventory view (CanvasLayer, PROCESS_MODE_ALWAYS).
 #
-# Rendering: a SubViewport with its own World3D (own_world_3d, transparent background) holds a
-# tarp, a crafting mat, a light and an orthographic camera. Each carried item is shown as real
+# Scene: inventory_screen.tscn. A SubViewport with its own World3D (own_world_3d, transparent
+# background) holds a tarp, a crafting mat, a light and an orthographic camera; the 2D UI (dim,
+# cog, tooltip, recipe list, hint) sits on top. Nodes are looked up by unique name (%Name), so
+# they can be restyled or rearranged freely. Tarp and mat sizes are read from their meshes, and
+# the cog / recipe list follow the CogAnchor / RecipeAnchor markers. Each carried item is shown as real
 # instances of its own scene (ItemDefinition.instantiate), set to PROCESS_MODE_DISABLED so they
 # are display-only, auto-fitted to their slot and stacked into small piles.
 #
-# Layout: the tarp is a slot_columns x slot_rows grid minus the cells covered by the mat; each
+# Layout: the tarp's area is a slot_columns x slot_rows grid minus the cells covered by the mat; each
 # item id keeps the slot matching its index in Inventory.slot_order. The mat has its own grid
 # and is re-laid out whenever the set of ids on it changes.
 #
@@ -33,9 +36,6 @@ extends CanvasLayer
 
 # World-space metres inside the inventory's own SubViewport world.
 @export_group("Layout")
-## Size of the tarp in metres (16:9 fits the screen best).
-@export var tarp_size := Vector2(4.8, 2.7)
-@export var mat_size := Vector2(1.7, 1.0)
 ## The tarp is split into spots; spots under the mat are skipped.
 @export var slot_columns: int = 8
 @export var slot_rows: int = 4
@@ -45,15 +45,17 @@ extends CanvasLayer
 @export var item_fit_size: float = 0.4
 ## Most copies of one item shown in a pile (e.g. 30 arrows still show 10 models).
 @export var max_models_per_item: int = 10
-@export_range(20.0, 90.0) var camera_pitch_degrees: float = 60.0
+## Resize the orthographic camera every frame so the whole tarp fits any window shape.
+## The camera keeps the position and angle it has in the scene.
+@export var auto_fit_camera: bool = true
+## Extra room around the tarp when auto-fitting (0.06 = 6%).
+@export var camera_margin: float = 0.06
 
 @export_group("Look")
-@export var tarp_color := Color(0.16, 0.33, 0.52)
-@export var mat_color := Color(0.66, 0.55, 0.4)
-@export var background_dim := Color(0, 0, 0, 0.5)
-@export var hover_color := Color(1.0, 0.85, 0.25, 0.45)
-@export var new_item_color := Color(1.0, 1.0, 1.0, 0.45)
-@export var ui_font_size: int = 10
+## Overlay drawn on the item under the mouse.
+@export var hover_material: Material
+## Overlay drawn on items picked up but not yet hovered (its alpha pulses).
+@export var new_item_material: Material
 @export var tooltip_delay: float = 0.2
 
 @export_group("Sounds")
@@ -87,6 +89,13 @@ var _tooltip_label: Label
 var _recipe_panel: PanelContainer
 var _recipe_label: Label
 var _hint_label: Label
+var _cog_anchor: Node3D
+var _recipe_anchor: Node3D
+# Tarp / mat footprint on the XZ plane and their top heights, read from the scene meshes.
+var _tarp_rect := Rect2()
+var _mat_rect := Rect2()
+var _tarp_y := 0.0
+var _mat_y := 0.0
 
 # "<id>|0" = tarp pile, "<id>|1" = mat pile -> Array[ItemModel].
 var _models: Dictionary = {}
@@ -101,8 +110,9 @@ var _warned_full_tarp := false
 var _hovered: ItemModel
 var _hover_group := ""
 var _hover_time := 0.0
-var _hover_material: StandardMaterial3D
-var _new_material: StandardMaterial3D
+var _hover_material: Material
+var _new_material: Material
+var _new_alpha := 1.0
 var _craft_options: Array[Dictionary] = []
 
 # Hold-to-batch state for right click (locked to the item first clicked).
@@ -117,18 +127,15 @@ var _player_saved_process_mode: Node.ProcessMode = Node.PROCESS_MODE_INHERIT
 var _time := 0.0
 
 
+# layer, visible = false and process_mode = ALWAYS are set on the scene root. ALWAYS is required:
+# the screen must keep running while the tree is paused, and while the player (our ancestor) is disabled.
 func _ready() -> void:
-	layer = 50
-	# Must keep running while the tree is paused, and while the player (our ancestor) is disabled.
-	process_mode = Node.PROCESS_MODE_ALWAYS
-	visible = false
-
 	if inventory == null:
 		inventory = get_parent() as Inventory
 	Inventory.ensure_action(toggle_action, KEY_I)
 	Inventory.ensure_action(drop_action, KEY_G)
 
-	_build_scene()
+	_bind_scene()
 	_compute_layout()
 
 	# React to data changes and crafting events from the model.
@@ -344,7 +351,8 @@ func _process(delta: float) -> void:
 				_continue_batch()
 
 	# Pulse the 'new item' overlay.
-	_new_material.albedo_color.a = new_item_color.a * (0.35 + 0.65 * (0.5 + 0.5 * sin(_time * 4.0)))
+	if _new_material is BaseMaterial3D:
+		(_new_material as BaseMaterial3D).albedo_color.a = _new_alpha * (0.35 + 0.65 * (0.5 + 0.5 * sin(_time * 4.0)))
 
 
 func _update_hover(delta: float) -> void:
@@ -586,9 +594,9 @@ func _mouse_over_mat() -> bool:
 	var direction := _camera.project_ray_normal(vp_pos)
 	if absf(direction.y) < 0.0001:
 		return false
-	# Intersect the mouse ray with the tarp plane (y = 0).
-	var point := from + direction * (-from.y / direction.y)
-	return absf(point.x) <= mat_size.x * 0.5 and absf(point.z) <= mat_size.y * 0.5
+	# Intersect the mouse ray with the mat's top plane.
+	var point := from + direction * ((_mat_y - from.y) / direction.y)
+	return _mat_rect.has_point(Vector2(point.x, point.z))
 
 
 func _world_to_ui(point: Vector3) -> Vector2:
@@ -648,15 +656,15 @@ func _missing_text(recipe: ItemDatabase.Recipe) -> String:
 
 
 func _position_overlay_ui() -> void:
-	# Cog sits just below the mat's front edge, projected into UI space every frame.
-	var cog_point := _world_to_ui(Vector3(0, 0, mat_size.y * 0.5 + 0.12))
+	# Cog follows the CogAnchor marker, projected into UI space every frame.
+	var cog_point := _world_to_ui(_cog_anchor.global_position)
 	_cog.position = cog_point - _cog.size * 0.5
 
 	# Recipe list only while pointing at the cog or the mat, to keep the tarp readable.
 	var show_list := not _craft_options.is_empty() and (_cog.is_mouse_over() or _mouse_over_mat())
 	_recipe_panel.visible = show_list
 	if show_list:
-		var top_right := _world_to_ui(Vector3(mat_size.x * 0.5, 0, -mat_size.y * 0.5))
+		var top_right := _world_to_ui(_recipe_anchor.global_position)
 		var max_position := _ui.size - _recipe_panel.size
 		_recipe_panel.position = Vector2(minf(top_right.x + 6.0, max_position.x), clampf(top_right.y, 0.0, max_position.y))
 
@@ -705,177 +713,98 @@ func _update_tooltip() -> void:
 	_tooltip.position = Vector2(minf(mouse.x, max_position.x), minf(mouse.y, max_position.y))
 
 
-func _build_scene() -> void:
-	_ui = Control.new()
-	_ui.name = "UI"
-	_ui.mouse_filter = Control.MOUSE_FILTER_STOP
-	add_child(_ui)
-	_ui.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+func _bind_scene() -> void:
+	_ui = %UI
+	_container = %ViewportContainer
+	_viewport = %Viewport
+	_camera = %Camera
+	_items_root = %Items
+	_cog = %Cog
+	_recipe_panel = %RecipePanel
+	_recipe_label = %RecipeLabel
+	_tooltip = %Tooltip
+	_tooltip_label = %TooltipLabel
+	_hint_label = %Hint
+	_cog_anchor = %CogAnchor
+	_recipe_anchor = %RecipeAnchor
 
-	var dim := ColorRect.new()
-	dim.color = background_dim
-	dim.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_ui.add_child(dim)
-	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var tarp: MeshInstance3D = %Tarp
+	var mat: MeshInstance3D = %Mat
+	_tarp_rect = _footprint(tarp)
+	_mat_rect = _footprint(mat)
+	_tarp_y = _top_height(tarp)
+	_mat_y = _top_height(mat)
 
-	_container = SubViewportContainer.new()
-	# stretch keeps the SubViewport size equal to the container (base resolution, pixelated like the game).
-	_container.stretch = true
-	_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_ui.add_child(_container)
-	_container.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_hover_material = hover_material
+	_new_material = new_item_material
+	if _new_material is BaseMaterial3D:
+		_new_alpha = (_new_material as BaseMaterial3D).albedo_color.a
 
-	_viewport = SubViewport.new()
-	# Separate World3D: item copies never interact with or appear in the game world.
-	_viewport.own_world_3d = true
-	_viewport.transparent_bg = true
-	_container.add_child(_viewport)
-
-	var environment := Environment.new()
-	# Clear-colour background + transparent_bg lets the dimmed game show around the tarp.
-	environment.background_mode = Environment.BG_CLEAR_COLOR
-	environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	environment.ambient_light_color = Color(0.75, 0.78, 0.85)
-	environment.ambient_light_energy = 0.7
-	var world_environment := WorldEnvironment.new()
-	world_environment.environment = environment
-	_viewport.add_child(world_environment)
-
-	var light := DirectionalLight3D.new()
-	light.rotation_degrees = Vector3(-60, 35, 0)
-	light.light_energy = 1.1
-	light.shadow_enabled = true
-	_viewport.add_child(light)
-
-	_camera = Camera3D.new()
-	_camera.projection = Camera3D.PROJECTION_ORTHOGONAL
-	_camera.near = 0.1
-	_camera.far = 50.0
-	_viewport.add_child(_camera)
-	_camera.make_current()
-	_place_camera()
-
-	# Tarp border, tarp, mat (slightly raised to avoid z-fighting).
-	_viewport.add_child(_make_plane(tarp_size + Vector2(0.12, 0.12), tarp_color.darkened(0.35), -0.004))
-	_viewport.add_child(_make_plane(tarp_size, tarp_color, 0.0))
-	_viewport.add_child(_make_plane(mat_size, mat_color, 0.002))
-
-	_items_root = Node3D.new()
-	_items_root.name = "Items"
-	_viewport.add_child(_items_root)
-
-	_hover_material = _make_overlay_material(hover_color)
-	_new_material = _make_overlay_material(new_item_color)
-
-	_cog = CraftingCog.new()
-	_ui.add_child(_cog)
-
-	_recipe_panel = _make_panel(false)
-	_recipe_label = _recipe_panel.get_child(0) as Label
 	_recipe_panel.visible = false
-	_ui.add_child(_recipe_panel)
-
-	_tooltip = _make_panel(true)
-	_tooltip_label = _tooltip.get_child(0) as Label
 	_tooltip.visible = false
-	_ui.add_child(_tooltip)
-
-	_hint_label = Label.new()
-	_hint_label.add_theme_font_size_override("font_size", ui_font_size)
-	_hint_label.add_theme_constant_override("outline_size", 4)
-	_hint_label.add_theme_color_override("font_outline_color", Color.BLACK)
-	_hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_hint_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_hint_label.text = "RMB: to/from mat    Cog or %s: craft    LMB: use / hold    %s: drop    %s: close" % [
 		ItemInteractor.action_key_text(craft_action),
 		ItemInteractor.action_key_text(drop_action),
 		ItemInteractor.action_key_text(toggle_action),
 	]
-	_ui.add_child(_hint_label)
-	_hint_label.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
-	_hint_label.grow_horizontal = Control.GROW_DIRECTION_BOTH
-	_hint_label.grow_vertical = Control.GROW_DIRECTION_BEGIN
-	_hint_label.position.y -= 4
+
+
+# World-space AABB of a mesh flattened onto the XZ plane (x -> x, z -> y).
+func _footprint(mesh_instance: MeshInstance3D) -> Rect2:
+	var box: AABB = mesh_instance.global_transform * mesh_instance.get_aabb()
+	return Rect2(Vector2(box.position.x, box.position.z), Vector2(box.size.x, box.size.z))
+
+
+func _top_height(mesh_instance: MeshInstance3D) -> float:
+	var box: AABB = mesh_instance.global_transform * mesh_instance.get_aabb()
+	return box.end.y
 
 
 func _compute_layout() -> void:
 	_slot_centers.clear()
 	_mat_centers.clear()
 
-	_slot_cell = Vector2(tarp_size.x / slot_columns, tarp_size.y / slot_rows)
-	# Skip tarp cells that overlap the mat (shrunk by 1 cm to ignore edge-touching cells).
-	var mat_rect := Rect2(-mat_size * 0.5, mat_size)
+	_slot_cell = Vector2(_tarp_rect.size.x / slot_columns, _tarp_rect.size.y / slot_rows)
 	for row in slot_rows:
 		for column in slot_columns:
-			var x := -tarp_size.x * 0.5 + (column + 0.5) * _slot_cell.x
-			var z := -tarp_size.y * 0.5 + (row + 0.5) * _slot_cell.y
+			var x := _tarp_rect.position.x + (column + 0.5) * _slot_cell.x
+			var z := _tarp_rect.position.y + (row + 0.5) * _slot_cell.y
+			# Skip tarp cells that overlap the mat (shrunk by 1 cm to ignore edge-touching cells).
 			var cell_rect := Rect2(Vector2(x, z) - _slot_cell * 0.5, _slot_cell).grow(-0.01)
-			if cell_rect.intersects(mat_rect):
+			if cell_rect.intersects(_mat_rect):
 				continue
-			_slot_centers.append(Vector3(x, 0.0, z))
+			_slot_centers.append(Vector3(x, _tarp_y, z))
 
-	_mat_cell = Vector2(mat_size.x / mat_columns, mat_size.y / mat_rows)
+	_mat_cell = Vector2(_mat_rect.size.x / mat_columns, _mat_rect.size.y / mat_rows)
 	for row in mat_rows:
 		for column in mat_columns:
 			_mat_centers.append(Vector3(
-				-mat_size.x * 0.5 + (column + 0.5) * _mat_cell.x,
-				0.002,
-				-mat_size.y * 0.5 + (row + 0.5) * _mat_cell.y
+				_mat_rect.position.x + (column + 0.5) * _mat_cell.x,
+				_mat_y,
+				_mat_rect.position.y + (row + 0.5) * _mat_cell.y
 			))
 
 
+# Ortho size (vertical extent) so every tarp corner, plus room for stacked items, fits on screen.
+# Works for any camera position/angle set in the scene; only `size` is changed.
 func _place_camera() -> void:
-	var pitch := deg_to_rad(camera_pitch_degrees)
-	_camera.rotation = Vector3(-pitch, 0.0, 0.0)
-	_camera.position = Vector3(0.0, sin(pitch), cos(pitch)) * 10.0
-	var aspect := float(_viewport.size.x) / maxf(1.0, float(_viewport.size.y))
-	var needed_height := tarp_size.y * sin(pitch) + 0.4 * cos(pitch)
-	# Ortho size (vertical extent) chosen so both the tilted tarp depth and the full width fit.
-	_camera.size = maxf(needed_height, (tarp_size.x + 0.15) / maxf(aspect, 0.1)) * 1.06
-
-
-func _make_plane(plane_size: Vector2, color: Color, height: float) -> MeshInstance3D:
-	var mesh := PlaneMesh.new()
-	mesh.size = plane_size
-	var material := StandardMaterial3D.new()
-	material.albedo_color = color
-	material.roughness = 1.0
-	mesh.material = material
-	var instance := MeshInstance3D.new()
-	instance.mesh = mesh
-	instance.position.y = height
-	return instance
-
-
-func _make_overlay_material(color: Color) -> StandardMaterial3D:
-	var material := StandardMaterial3D.new()
-	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	# Additive, unshaded overlay: brightens the model without hiding its texture.
-	material.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
-	material.albedo_color = color
-	return material
-
-
-func _make_panel(word_wrap: bool) -> PanelContainer:
-	var panel := PanelContainer.new()
-	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.05, 0.07, 0.1, 0.85)
-	style.border_color = Color(0.9, 0.85, 0.6, 0.8)
-	style.set_border_width_all(1)
-	style.set_corner_radius_all(3)
-	style.set_content_margin_all(4)
-	panel.add_theme_stylebox_override("panel", style)
-
-	var label := Label.new()
-	label.add_theme_font_size_override("font_size", ui_font_size)
-	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	if word_wrap:
-		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		label.custom_minimum_size.x = 150
-	panel.add_child(label)
-	return panel
+	if not auto_fit_camera or _viewport.size.y <= 0:
+		return
+	var aspect := float(_viewport.size.x) / float(_viewport.size.y)
+	var to_camera := _camera.global_transform.affine_inverse()
+	var half := Vector2.ZERO
+	var corners: Array[Vector2] = [
+		_tarp_rect.position,
+		Vector2(_tarp_rect.end.x, _tarp_rect.position.y),
+		_tarp_rect.end,
+		Vector2(_tarp_rect.position.x, _tarp_rect.end.y),
+	]
+	for corner in corners:
+		for height in [_tarp_y, _tarp_y + item_fit_size]:
+			var local: Vector3 = to_camera * Vector3(corner.x, height, corner.y)
+			half.x = maxf(half.x, absf(local.x))
+			half.y = maxf(half.y, absf(local.y))
+	_camera.size = maxf(half.y * 2.0, half.x * 2.0 / aspect) * (1.0 + camera_margin)
 
 
 func _play(sound: AudioStream) -> void:

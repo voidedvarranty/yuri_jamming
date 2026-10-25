@@ -22,7 +22,7 @@ Listen to `Inventory.item_used(item_id)` for anything else (equipping, sounds...
 Left click an item in the inventory to hold it (click again to put it away). Food/meds are used instead.
 In the world: F = inspect (mouse spins the item, F/Esc = back), X = put away, G = drop one.
 Tweak how an item sits in the hand under **In Hand** on its InventoryItem (offset, rotation, scale).
-Want a real arm? Set `hand_scene` on the ItemHand node (add a Node3D named "Grip" where the item goes).
+Want a real arm? Open `Scenes/Inventory/hand_rig.tscn`, replace PlaceholderArm with your model and move `Grip` to where the item goes. Move `RestPoint` / `InspectPoint` to change the hold and inspect poses.
 
 ## Controls
 I = inventory, E = take, RMB = to/from crafting mat (hold = batch), click cog or Space = craft,

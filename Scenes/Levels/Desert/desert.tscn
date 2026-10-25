@@ -12,5 +12,5 @@ uv1_scale = Vector3(100, 100, 100)
 
 [node name="Desert" unique_id=386311619 instance=ExtResource("1_iknd1")]
 
-[node name="Plane" parent="." index="0" unique_id=1031935826]
+[node name="Plane" parent="." index="0" unique_id=515817666]
 surface_material_override/0 = SubResource("StandardMaterial3D_exoie")

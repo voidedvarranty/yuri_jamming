@@ -22,11 +22,18 @@ size = Vector3(0.9, 0.5, 2.2)
 [sub_resource type="BoxMesh" id="BoxMesh_nose"]
 size = Vector3(0.6, 0.35, 0.5)
 
+[sub_resource type="SphereShape3D" id="SphereShape3D_mount"]
+radius = 2.5
+
 [sub_resource type="StandardMaterial3D" id="Mat_nose"]
 albedo_color = Color(1, 0.45, 0.1, 1)
 
-[node name="HoverBike" type="RigidBody3D" unique_id=1689250176]
+[node name="HoverBike" type="RigidBody3D" unique_id=1689250176 node_paths=PackedStringArray("seat", "mount_area", "exit_points", "chase_camera")]
 script = ExtResource("1_bike")
+seat = NodePath("Seat")
+mount_area = NodePath("MountArea")
+exit_points = NodePath("ExitPoints")
+chase_camera = NodePath("ChaseCamera")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1323943490]
 shape = SubResource("BoxShape3D_bike")
@@ -38,6 +45,34 @@ mesh = SubResource("BoxMesh_body")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, -0.9)
 mesh = SubResource("BoxMesh_nose")
 surface_material_override/0 = SubResource("Mat_nose")
+
+[node name="Seat" type="RemoteTransform3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0.2)
+update_scale = false
+
+[node name="MountArea" type="Area3D" parent="."]
+collision_layer = 0
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MountArea"]
+shape = SubResource("SphereShape3D_mount")
+
+[node name="ExitPoints" type="Node3D" parent="."]
+
+[node name="Left" type="Marker3D" parent="ExitPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, 0.4, 0)
+gizmo_extents = 0.3
+
+[node name="Right" type="Marker3D" parent="ExitPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4, 0.4, 0)
+gizmo_extents = 0.3
+
+[node name="Top" type="Marker3D" parent="ExitPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.9, 0)
+gizmo_extents = 0.3
+
+[node name="ChaseCamera" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.980581, 0.196116, 0, -0.196116, 0.980581, 0, 2.2, 6)
 
 [node name="StatisticList" type="Node" parent="." unique_id=571808679]
 script = ExtResource("2_list")
