@@ -1,6 +1,10 @@
 [gd_scene format=3 uid="uid://bank8ci6k6tp6"]
 
-[ext_resource type="PackedScene" uid="uid://8w5s2m5ge78i" path="res://Scripts/Logic/StateEngine/state_engine.tscn" id="1_woysl"]
+[ext_resource type="Script" uid="uid://d0uwyk0srvic6" path="res://Scripts/ProtagonistPartner/protagonist_partner.gd" id="1_0uvb6"]
+[ext_resource type="Script" uid="uid://butxpb03fjp7b" path="res://Scripts/Logic/StateEngine/state_engine_script.gd" id="1_woysl"]
+[ext_resource type="Script" uid="uid://bs8jfawehg5tb" path="res://Scripts/ProtagonistPartner/States/idle.gd" id="2_03m5l"]
+[ext_resource type="Script" uid="uid://d3qr47m0eltso" path="res://Scripts/Logic/StatisticsList/statistics_list_scr.gd" id="3_mas1r"]
+[ext_resource type="Script" uid="uid://bi405jf26703l" path="res://Scripts/Logic/Statistics/statistic_number.gd" id="4_0uvb6"]
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_t2dwb"]
 
@@ -17,6 +21,7 @@ albedo_color = Color(0.7929253, 0.10300366, 0.1641615, 1)
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_t2dwb"]
 
 [node name="ProtagonistPartner" type="CharacterBody3D" unique_id=1294461781]
+script = ExtResource("1_0uvb6")
 
 [node name="Body" type="MeshInstance3D" parent="." unique_id=1916445454]
 mesh = SubResource("CylinderMesh_t2dwb")
@@ -30,9 +35,38 @@ surface_material_override/0 = SubResource("StandardMaterial3D_woysl")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1472229490]
 shape = SubResource("CylinderShape3D_t2dwb")
 
-[node name="state_engine" parent="." unique_id=1189199343 node_paths=PackedStringArray("actor") instance=ExtResource("1_woysl")]
-actor = NodePath("..")
-
 [node name="DebugTextLabel" type="Label3D" parent="." unique_id=998924223]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3053874, 0)
 text = "Looking Around"
+
+[node name="StateEngine" type="Node" parent="." unique_id=802956535 node_paths=PackedStringArray("initial_state", "actor")]
+script = ExtResource("1_woysl")
+initial_state = NodePath("NormalStateEngine")
+actor = NodePath("..")
+metadata/_custom_type_script = "uid://butxpb03fjp7b"
+
+[node name="HoverBikeEngine" type="Node" parent="StateEngine" unique_id=1275960344]
+script = ExtResource("1_woysl")
+metadata/_custom_type_script = "uid://butxpb03fjp7b"
+
+[node name="InAirEngine" type="Node" parent="StateEngine" unique_id=443387273]
+script = ExtResource("1_woysl")
+metadata/_custom_type_script = "uid://butxpb03fjp7b"
+
+[node name="NormalStateEngine" type="Node" parent="StateEngine" unique_id=337202724 node_paths=PackedStringArray("initial_state")]
+script = ExtResource("1_woysl")
+initial_state = NodePath("Idle")
+metadata/_custom_type_script = "uid://butxpb03fjp7b"
+
+[node name="Idle" type="Node" parent="StateEngine/NormalStateEngine" unique_id=1473872393]
+script = ExtResource("2_03m5l")
+
+[node name="StatisticList" type="Node" parent="." unique_id=923992646]
+script = ExtResource("3_mas1r")
+metadata/_custom_type_script = "uid://d3qr47m0eltso"
+
+[node name="Gravity" type="Node" parent="StatisticList" unique_id=5609251]
+script = ExtResource("4_0uvb6")
+statistic_value = 12.0
+locked = false
+metadata/_custom_type_script = "uid://bi405jf26703l"
