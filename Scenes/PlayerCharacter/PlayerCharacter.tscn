@@ -16,6 +16,8 @@
 [ext_resource type="Script" uid="uid://bpyd8s278oo6e" path="res://Scripts/PlayerCharacter/head_bob.gd" id="14_headbob"]
 [ext_resource type="Script" uid="uid://m8clerky6nmt" path="res://Scripts/Logic/Statistics/statistic_bool.gd" id="15_bool"]
 [ext_resource type="Script" uid="uid://d34o4rkrmfrib" path="res://Scripts/PlayerCharacter/States/sprinting.gd" id="16_sprint"]
+[ext_resource type="PackedScene" path="res://Scenes/Inventory/hand_rig.tscn" id="17_handrig"]
+[ext_resource type="Script" path="res://Scripts/PlayerCharacter/States/riding.gd" id="18_riding"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_crda1"]
 
@@ -183,6 +185,8 @@ script = ExtResource("6_akf18")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.7926263)
 gizmo_extents = 1.0
 
+[node name="HandRig" parent="Neck/Head/Camera3D" instance=ExtResource("17_handrig")]
+
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=2116171323]
 shape = SubResource("CapsuleShape3D_crda1")
 
@@ -220,5 +224,9 @@ script = ExtResource("10_ea7jj")
 [node name="Landed" type="Node" parent="StateEngine/InAirStateEngine" unique_id=56510347]
 script = ExtResource("12_0hgau")
 metadata/_custom_type_script = "uid://corrh6unt5pe0"
+
+[node name="Riding" type="Node" parent="StateEngine" node_paths=PackedStringArray("disable_while_riding")]
+script = ExtResource("18_riding")
+disable_while_riding = [NodePath("../../PlayerInventory"), NodePath("../../Neck/Head/Camera3D/GrabRangeRayCast3D")]
 
 [node name="PlayerInventory" parent="." unique_id=375512729 instance=ExtResource("13_inv")]

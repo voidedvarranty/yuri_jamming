@@ -22,7 +22,7 @@ extends CharacterBody3D
 @onready var camera: Camera3D = $Neck/Head/Camera3D
 @onready var head_bob: HeadBob = $HeadBob
 
-#kept as a property because HoverBike reads it via get()
+#kept as a property because the Riding state reads it too
 var mouse_sensitivity: float:
 	get:
 		return _stat("mousesensitivity", 0.003)
@@ -37,9 +37,13 @@ var is_in_air: bool = false:
 			statistic_list.set_value_of("jumpstaken", 0.0)
 		is_in_air = new_value
 
+var vehicle: HoverBike = null
+
 
 #yaw rotates the body, pitch rotates only the camera and pitch is clamped in _physics_process.
 func _unhandled_input(event: InputEvent) -> void:
+	if vehicle != null:
+		return
 	if event is InputEventMouseMotion:
 		rotate_y(-event.relative.x * mouse_sensitivity)
 		camera.rotation.x -= event.relative.y * mouse_sensitivity
@@ -50,6 +54,8 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if vehicle != null:
+		return
 	# raw WASD vector, y is forward/back in screen terms, negative is forward).
 	var input: Vector2 = Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	statistic_list.set_value_of("inputdirection", input)
@@ -96,6 +102,10 @@ func _physics_process(delta: float) -> void:
 
 
 #single source of truth for sprinting, HeadBob and the speed calculation both use it
+func is_riding() -> bool:
+	return vehicle != null
+
+
 func is_sprinting() -> bool:
 	return statistic_list.statistics.has("issprinting") and statistic_list.get_value_of("issprinting")
 

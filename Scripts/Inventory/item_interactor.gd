@@ -7,6 +7,7 @@
 #      (+0.3 m) is rejected, so items can't be grabbed through walls.
 # Reach and radius come from the player's PickupReach / PickupRadius statistics when present.
 #
+# The HUD (crosshair + prompt label) lives in the scene; assign it via `crosshair` / `prompt`.
 # HUD is hidden while paused (inventory/pause menu), while the owner is disabled (hover bike),
 # and while ItemHand is inspecting.
 
@@ -24,7 +25,10 @@ extends Node
 @export_flags_3d_physics var collision_mask: int = 0xFFFFFFFF
 @export var show_prompt: bool = true
 @export var show_crosshair: bool = true
-@export var prompt_font_size: int = 10
+
+@export_group("HUD")
+@export var crosshair: Crosshair
+@export var prompt: Label
 
 @export_group("Sounds")
 @export var pickup_sound: AudioStream
@@ -32,7 +36,6 @@ extends Node
 
 var looked_at: InventoryItem
 
-var _layer: CanvasLayer
 var _prompt: Label
 var _crosshair: Crosshair
 var _message_timer := 0.0
@@ -47,7 +50,11 @@ func _ready() -> void:
 	if inventory != null:
 		# Hide immediately on open; NOTIFICATION_PAUSED follows when the tree pauses.
 		inventory.opened.connect(_hide_hud)
-	_build_hud()
+	_crosshair = crosshair
+	_prompt = prompt
+	if _crosshair == null or _prompt == null:
+		push_warning("ItemInteractor: crosshair / prompt not assigned; pickups work without a HUD.")
+	_hide_hud()
 
 
 func _physics_process(delta: float) -> void:
@@ -56,11 +63,11 @@ func _physics_process(delta: float) -> void:
 		looked_at = null
 		_hide_hud()
 		return
-	# Re-shown every active tick, which also restores it after pause/disable ends.
-	_crosshair.visible = show_crosshair
-
 	looked_at = _find_item()
-	_crosshair.highlighted = looked_at != null
+	# Re-shown every active tick, which also restores it after pause/disable ends.
+	if _crosshair != null:
+		_crosshair.visible = show_crosshair
+		_crosshair.highlighted = looked_at != null
 	# A temporary message (e.g. 'Can't carry more') holds the prompt until it expires.
 	if _message_timer > 0.0:
 		_message_timer -= delta
@@ -80,7 +87,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	if inventory.pick_up(looked_at):
 		_play(pickup_sound)
 		looked_at = null
-		_crosshair.highlighted = false
+		if _crosshair != null:
+			_crosshair.highlighted = false
 		_update_prompt()
 	else:
 		_play(full_sound)
@@ -171,38 +179,9 @@ func _get_player_body() -> CollisionObject3D:
 	return null
 
 
-func _build_hud() -> void:
-	_layer = CanvasLayer.new()
-	_layer.layer = 5
-	add_child(_layer)
-
-	var root := Control.new()
-	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_layer.add_child(root)
-	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-
-	_crosshair = Crosshair.new()
-	root.add_child(_crosshair)
-	# Zero-size control at the exact screen centre; Crosshair draws around its origin.
-	_crosshair.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
-	_crosshair.visible = false
-
-	_prompt = Label.new()
-	_prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_prompt.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
-	_prompt.add_theme_font_size_override("font_size", prompt_font_size)
-	_prompt.add_theme_constant_override("outline_size", 4)
-	_prompt.add_theme_color_override("font_outline_color", Color.BLACK)
-	_prompt.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	root.add_child(_prompt)
-	_prompt.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
-	_prompt.grow_horizontal = Control.GROW_DIRECTION_BOTH
-	_prompt.grow_vertical = Control.GROW_DIRECTION_BEGIN
-	_prompt.position.y -= 24
-	_prompt.visible = false
-
-
 func _update_prompt() -> void:
+	if _prompt == null:
+		return
 	if not show_prompt or looked_at == null or not is_instance_valid(looked_at) or inventory == null:
 		_prompt.visible = false
 		return
@@ -218,6 +197,8 @@ func _update_prompt() -> void:
 
 
 func _show_message(text: String) -> void:
+	if _prompt == null:
+		return
 	_prompt.text = text
 	_prompt.visible = true
 	_message_timer = 1.2

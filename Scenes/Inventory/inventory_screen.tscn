@@ -1,0 +1,209 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://d30o3hyqklox0" path="res://Scripts/Inventory/inventory_screen.gd" id="1_screen"]
+[ext_resource type="Script" uid="uid://0oel1je3dirg" path="res://Scripts/Inventory/crafting_cog.gd" id="2_cog"]
+
+[sub_resource type="StandardMaterial3D" id="Mat_hover"]
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+albedo_color = Color(1, 0.85, 0.25, 0.45)
+
+[sub_resource type="StandardMaterial3D" id="Mat_new"]
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+albedo_color = Color(1, 1, 1, 0.45)
+
+[sub_resource type="Environment" id="Env_inventory"]
+ambient_light_source = 2
+ambient_light_color = Color(0.75, 0.78, 0.85, 1)
+ambient_light_energy = 0.7
+
+[sub_resource type="StandardMaterial3D" id="Mat_border"]
+albedo_color = Color(0.104, 0.2145, 0.338, 1)
+roughness = 1.0
+
+[sub_resource type="PlaneMesh" id="Mesh_border"]
+material = SubResource("Mat_border")
+size = Vector2(4.92, 2.82)
+
+[sub_resource type="StandardMaterial3D" id="Mat_tarp"]
+albedo_color = Color(0.16, 0.33, 0.52, 1)
+roughness = 1.0
+
+[sub_resource type="PlaneMesh" id="Mesh_tarp"]
+material = SubResource("Mat_tarp")
+size = Vector2(4.8, 2.7)
+
+[sub_resource type="StandardMaterial3D" id="Mat_mat"]
+albedo_color = Color(0.66, 0.55, 0.4, 1)
+roughness = 1.0
+
+[sub_resource type="PlaneMesh" id="Mesh_mat"]
+material = SubResource("Mat_mat")
+size = Vector2(1.7, 1)
+
+[sub_resource type="StyleBoxFlat" id="Style_panel"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.05, 0.07, 0.1, 0.85)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.9, 0.85, 0.6, 0.8)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[node name="InventoryScreen" type="CanvasLayer"]
+process_mode = 3
+layer = 50
+visible = false
+script = ExtResource("1_screen")
+hover_material = SubResource("Mat_hover")
+new_item_material = SubResource("Mat_new")
+
+[node name="UI" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dim" type="ColorRect" parent="UI"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0.5)
+
+[node name="ViewportContainer" type="SubViewportContainer" parent="UI"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+stretch = true
+
+[node name="Viewport" type="SubViewport" parent="UI/ViewportContainer"]
+unique_name_in_owner = true
+own_world_3d = true
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(480, 270)
+render_target_update_mode = 4
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="UI/ViewportContainer/Viewport"]
+environment = SubResource("Env_inventory")
+
+[node name="Light" type="DirectionalLight3D" parent="UI/ViewportContainer/Viewport"]
+transform = Transform3D(0.819152, -0.496732, 0.286788, 0, 0.5, 0.866025, -0.573576, -0.709406, 0.409576, 0, 5, 0)
+light_energy = 1.1
+shadow_enabled = true
+
+[node name="Camera" type="Camera3D" parent="UI/ViewportContainer/Viewport"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 0.5, 0.866025, 0, -0.866025, 0.5, 0, 8.660254, 5)
+projection = 1
+current = true
+size = 2.95
+near = 0.1
+far = 50.0
+
+[node name="Border" type="MeshInstance3D" parent="UI/ViewportContainer/Viewport"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.004, 0)
+mesh = SubResource("Mesh_border")
+
+[node name="Tarp" type="MeshInstance3D" parent="UI/ViewportContainer/Viewport"]
+unique_name_in_owner = true
+mesh = SubResource("Mesh_tarp")
+
+[node name="Mat" type="MeshInstance3D" parent="UI/ViewportContainer/Viewport"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.002, 0)
+mesh = SubResource("Mesh_mat")
+
+[node name="CogAnchor" type="Marker3D" parent="UI/ViewportContainer/Viewport"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.002, 0.62)
+gizmo_extents = 0.15
+
+[node name="RecipeAnchor" type="Marker3D" parent="UI/ViewportContainer/Viewport"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.85, 0.002, -0.5)
+gizmo_extents = 0.15
+
+[node name="Items" type="Node3D" parent="UI/ViewportContainer/Viewport"]
+unique_name_in_owner = true
+
+[node name="Cog" type="Control" parent="UI"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(26, 26)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 26.0
+offset_bottom = 26.0
+mouse_filter = 2
+script = ExtResource("2_cog")
+
+[node name="RecipePanel" type="PanelContainer" parent="UI"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Style_panel")
+
+[node name="RecipeLabel" type="Label" parent="UI/RecipePanel"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 10
+
+[node name="Tooltip" type="PanelContainer" parent="UI"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Style_panel")
+
+[node name="TooltipLabel" type="Label" parent="UI/Tooltip"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 10
+autowrap_mode = 3
+
+[node name="Hint" type="Label" parent="UI"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -200.0
+offset_top = -18.0
+offset_right = 200.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 10
+horizontal_alignment = 1
