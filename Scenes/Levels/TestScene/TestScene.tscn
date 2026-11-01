@@ -1,0 +1,45 @@
+[gd_scene format=3 uid="uid://jccmkxgeuk0p"]
+
+[ext_resource type="PackedScene" uid="uid://dxlamgl31mmuh" path="res://Assets/3DModels/Desert/Desert.fbx" id="1_1at78"]
+[ext_resource type="Texture2D" uid="uid://duskc15t0apeo" path="res://Assets/3DModels/Desert/desertLEVEL1_0.png" id="2_2jn7p"]
+[ext_resource type="Texture2D" uid="uid://xgqupqq0li4k" path="res://Assets/3DModels/Desert/normalDesert.png" id="3_apsfa"]
+[ext_resource type="PackedScene" uid="uid://0aw6o2kqpo31" path="res://Scenes/PlayerCharacter/PlayerCharacter.tscn" id="4_g07cj"]
+[ext_resource type="PackedScene" uid="uid://bank8ci6k6tp6" path="res://Scenes/ProtagonistPartner/ProtagonistPartner.tscn" id="5_klb8j"]
+[ext_resource type="PackedScene" uid="uid://b1to68tgil768" path="res://Scenes/HoverBike/hover_bike.tscn" id="6_t2l1s"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_exoie"]
+albedo_texture = ExtResource("2_2jn7p")
+normal_enabled = true
+normal_texture = ExtResource("3_apsfa")
+uv1_scale = Vector3(100, 100, 100)
+
+[sub_resource type="BoxMesh" id="BoxMesh_t2dwb"]
+size = Vector3(20, 20, 20)
+
+[sub_resource type="BoxMesh" id="BoxMesh_g07cj"]
+size = Vector3(10, 50, 10)
+
+[node name="Desert" unique_id=386311619 instance=ExtResource("1_1at78")]
+
+[node name="Plane" parent="." index="0" unique_id=87459000]
+surface_material_override/0 = SubResource("StandardMaterial3D_exoie")
+
+[node name="PlayerCharacter" parent="." index="1" unique_id=308607481 instance=ExtResource("4_g07cj")]
+transform = Transform3D(0.40625805, 0, 0.9137584, 0, 1, 0, -0.9137584, 0, 0.40625805, 1.3692813, -8.562427, -39.09898)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." index="2" unique_id=877768494]
+transform = Transform3D(0.69502527, -0.38770422, 0.6054959, -0.7189853, -0.37478405, 0.58531785, 0, -0.8421534, -0.53923804, 0, 0, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." index="3" unique_id=117738122]
+transform = Transform3D(0.9909923, 0.1335948, 0.009307772, -0.12617926, 0.95474875, -0.2693205, -0.044866413, 0.26572007, 0.9630056, -31.713116, -3.8231335, -36.625385)
+mesh = SubResource("BoxMesh_t2dwb")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="." index="4" unique_id=1194323897]
+transform = Transform3D(0.9909924, 0.13359481, 0.009307771, -0.12079552, 0.86171395, 0.4928058, 0.057815652, -0.48949122, 0.87008977, -8.952125, -4.3141413, -53.623)
+mesh = SubResource("BoxMesh_g07cj")
+
+[node name="ProtagonistPartner" parent="." index="5" unique_id=1294461781 instance=ExtResource("5_klb8j")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.343601, -4.8193855, -41.27333)
+
+[node name="HoverBike" parent="." index="6" unique_id=1689250176 instance=ExtResource("6_t2l1s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1356459, -6.9557085, -36.633095)
