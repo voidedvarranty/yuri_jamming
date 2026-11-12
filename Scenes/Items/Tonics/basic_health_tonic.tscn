@@ -15,7 +15,7 @@ material = SubResource("StandardMaterial3D_ann3d")
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_j5yut"]
 
-[node name="BasicHealthTonic" type="RigidBody3D" unique_id=56335192]
+[node name="BasicHealthTonic" type="RigidBody3D" unique_id=56335192 groups=["CanBePickedUp"]]
 mass = 0.3
 
 [node name="Stem" type="MeshInstance3D" parent="." unique_id=2029255781]

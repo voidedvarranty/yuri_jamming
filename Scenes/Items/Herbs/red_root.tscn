@@ -11,7 +11,7 @@ material = SubResource("StandardMaterial3D_ann3d")
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_f4dqj"]
 height = 1.9604492
 
-[node name="RedRoot" type="RigidBody3D" unique_id=56335192]
+[node name="RedRoot" type="RigidBody3D" unique_id=56335192 groups=["CanBePickedUp"]]
 mass = 0.3
 
 [node name="Root" type="MeshInstance3D" parent="." unique_id=2029255781]
