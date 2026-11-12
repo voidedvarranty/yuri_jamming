@@ -62,10 +62,6 @@ var _camera_rest := Quaternion.IDENTITY
 
 
 func _ready() -> void:
-	Inventory.ensure_action(inspect_action, KEY_F)
-	Inventory.ensure_action(put_away_action, KEY_X)
-	Inventory.ensure_action(drop_action, KEY_G)
-
 	if inventory == null:
 		inventory = get_parent() as Inventory
 	_player = inventory.get_parent() if inventory != null else get_parent()
