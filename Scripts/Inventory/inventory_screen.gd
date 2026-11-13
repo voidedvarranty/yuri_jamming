@@ -132,8 +132,6 @@ var _time := 0.0
 func _ready() -> void:
 	if inventory == null:
 		inventory = get_parent() as Inventory
-	Inventory.ensure_action(toggle_action, KEY_I)
-	Inventory.ensure_action(drop_action, KEY_G)
 
 	_bind_scene()
 	_compute_layout()

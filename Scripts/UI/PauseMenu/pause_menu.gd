@@ -8,7 +8,7 @@ extends Control
 @export var main_menu_transition_duration: float = 1.0
 
 @export_group("Pause Input")
-@export var pause_key: Key = KEY_BACKSPACE
+@export var pause_action: String = &"pause"
 @export var add_input_blocker: bool = true
 
 @export_group("Pause Exceptions")
@@ -59,12 +59,10 @@ func _ready() -> void:
 	_connect_settings_signals()
 	_connect_ui_sound_signals()
 
-
 func _input(event: InputEvent) -> void:
 	if event is InputEventKey:
 		var key_event: InputEventKey = event as InputEventKey
-
-		if key_event.pressed and not key_event.echo and key_event.keycode == pause_key:
+		if key_event.is_action_pressed(pause_action):
 			get_viewport().set_input_as_handled()
 			toggle_pause()
 
@@ -136,6 +134,8 @@ func pause_game() -> void:
 	visible = true
 	mouse_filter = Control.MOUSE_FILTER_STOP
 
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+
 	if input_blocker != null:
 		input_blocker.visible = true
 		input_blocker.mouse_filter = Control.MOUSE_FILTER_STOP
@@ -144,6 +144,8 @@ func pause_game() -> void:
 func resume_game() -> void:
 	get_tree().paused = false
 	visible = false
+
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 	if input_blocker != null:
 		input_blocker.visible = false

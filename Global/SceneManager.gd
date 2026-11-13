@@ -27,7 +27,7 @@ signal overlay_cleared
 @export var add_overlay_input_blocker: bool = true
 
 var scenes: Dictionary = {
-	"main_menu": "res://Scenes/UI/Main Menu/main_menu.tscn",
+	"main_menu": "res://Scenes/UI/MainMenu/main_menu.tscn",
 	"groove": "res://Scenes/UI/PregameSound/sound_setup.tscn",
 	"main": "res://Scenes/Main/main.tscn",
 	"settings": "res://Scenes/UI/Settings/settings.tscn",

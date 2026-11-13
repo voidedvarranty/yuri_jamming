@@ -44,7 +44,6 @@ var _search_shape := CapsuleShape3D.new()
 
 
 func _ready() -> void:
-	Inventory.ensure_action(interact_action, KEY_E)
 	if inventory == null:
 		inventory = get_parent() as Inventory
 	if inventory != null:

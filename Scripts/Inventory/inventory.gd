@@ -48,10 +48,6 @@ var equipped: StringName = &""
 
 
 func _ready() -> void:
-	# Create default bindings only if the project doesn't define these actions
-	ensure_action(&"inventory", KEY_I)
-	ensure_action(&"interact", KEY_E)
-	ensure_action(&"drop_item", KEY_G)
 
 	ItemDatabase.ensure_loaded()
 	# Auto-unequip when the held items total drops to zero
@@ -344,13 +340,3 @@ func _get_drop_position() -> Vector3:
 	if parent != null:
 		return parent.global_position + Vector3.UP
 	return Vector3.ZERO
-
-
-#adds a physical-key default only when the action is missing, preserving user bindings
-static func ensure_action(action: StringName, key: Key) -> void:
-	if InputMap.has_action(action):
-		return
-	InputMap.add_action(action)
-	var event := InputEventKey.new()
-	event.physical_keycode = key
-	InputMap.action_add_event(action, event)
