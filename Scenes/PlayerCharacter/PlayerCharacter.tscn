@@ -18,6 +18,7 @@
 [ext_resource type="Script" uid="uid://d34o4rkrmfrib" path="res://Scripts/PlayerCharacter/States/sprinting.gd" id="16_sprint"]
 [ext_resource type="PackedScene" path="res://Scenes/Inventory/hand_rig.tscn" id="17_handrig"]
 [ext_resource type="Script" uid="uid://bjvxip7n0oerq" path="res://Scripts/PlayerCharacter/States/riding.gd" id="18_riding"]
+[ext_resource type="PackedScene" uid="uid://dafxpj0c1t616" path="res://Scenes/UI/PauseMenu/pause_menu.tscn" id="19_a86gk"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_crda1"]
 
@@ -230,3 +231,5 @@ script = ExtResource("18_riding")
 disable_while_riding = [NodePath("../../PlayerInventory"), NodePath("../../Neck/Head/Camera3D/GrabRangeRayCast3D")]
 
 [node name="PlayerInventory" parent="." unique_id=375512729 instance=ExtResource("13_inv")]
+
+[node name="PauseMenu" parent="." unique_id=624797746 instance=ExtResource("19_a86gk")]

@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://c654wuvkkey64" path="res://Scenes/Items/Herbs/sweet_sage.tscn" id="2_ifawy"]
 [ext_resource type="PackedScene" uid="uid://dtmo37gt6tr8n" path="res://Scenes/Items/Herbs/yellow_murrow.tscn" id="3_3nfyh"]
 [ext_resource type="PackedScene" uid="uid://dos85sg0uguby" path="res://Scenes/Levels/Desert/desert.tscn" id="8_b7y51"]
-[ext_resource type="PackedScene" path="res://Scenes/Items/berries.tscn" id="23_berries"]
+[ext_resource type="PackedScene" uid="uid://dihtn61o4n18f" path="res://Scenes/Items/berries.tscn" id="23_berries"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_crda1"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)

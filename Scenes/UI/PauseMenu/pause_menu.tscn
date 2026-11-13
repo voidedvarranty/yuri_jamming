@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://dafxpj0c1t616"]
 
-[ext_resource type="Script" uid="uid://es66sk8nxklc" path="res://Scripts/UI/Pause Menu/pause_menu.gd" id="1_2cja2"]
-[ext_resource type="AudioStream" uid="uid://brlsii31k4pcw" path="res://Assets/Audio/SFX/UI/menu_click.wav" id="2_r2i2h"]
-[ext_resource type="AudioStream" uid="uid://bkqfsw2ooppax" path="res://Assets/Audio/SFX/UI/ui_hover.wav" id="3_oykix"]
-[ext_resource type="AudioStream" uid="uid://dx08sm30svaqh" path="res://Assets/Audio/SFX/UI/new_game.wav" id="4_oykix"]
+[ext_resource type="Script" uid="uid://es66sk8nxklc" path="res://Scripts/UI/PauseMenu/pause_menu.gd" id="1_bkcxk"]
+[ext_resource type="AudioStream" uid="uid://bkqfsw2ooppax" path="res://Assets/Audio/SFX/UI/ui_hover.wav" id="2_2mkgl"]
+[ext_resource type="AudioStream" uid="uid://brlsii31k4pcw" path="res://Assets/Audio/SFX/UI/menu_click.wav" id="3_q7bkm"]
+[ext_resource type="AudioStream" uid="uid://dx08sm30svaqh" path="res://Assets/Audio/SFX/UI/new_game.wav" id="4_djhkf"]
 
 [node name="PauseMenu" type="Control" unique_id=624797746]
 process_mode = 3
@@ -13,11 +13,11 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_2cja2")
-button_hover_sound = ExtResource("3_oykix")
-button_click_sound = ExtResource("2_r2i2h")
-slider_hover_sound = ExtResource("3_oykix")
-slider_grab_sound = ExtResource("4_oykix")
+script = ExtResource("1_bkcxk")
+button_hover_sound = ExtResource("2_2mkgl")
+button_click_sound = ExtResource("3_q7bkm")
+slider_hover_sound = ExtResource("2_2mkgl")
+slider_grab_sound = ExtResource("4_djhkf")
 slider_visual_edge_padding = 0.07
 
 [node name="Panel" type="ColorRect" parent="." unique_id=1717142974]
@@ -90,8 +90,8 @@ vertical_alignment = 1
 
 [node name="MasterSlider" type="HSlider" parent="VBoxContainer2/CenterContainer/MarginContainer/VBoxContainer2/VBoxContainer/MasterHBox" unique_id=259316989]
 unique_name_in_owner = true
-clip_contents = true
 custom_minimum_size = Vector2(50, 0)
+clip_contents = true
 layout_mode = 2
 size_flags_horizontal = 3
 max_value = 1.0
@@ -112,8 +112,8 @@ vertical_alignment = 1
 
 [node name="MusicSlider" type="HSlider" parent="VBoxContainer2/CenterContainer/MarginContainer/VBoxContainer2/VBoxContainer/MusicHBox" unique_id=1547624416]
 unique_name_in_owner = true
-clip_contents = true
 custom_minimum_size = Vector2(50, 0)
+clip_contents = true
 layout_mode = 2
 size_flags_horizontal = 3
 max_value = 1.0
@@ -134,8 +134,8 @@ vertical_alignment = 1
 
 [node name="SFXSlider" type="HSlider" parent="VBoxContainer2/CenterContainer/MarginContainer/VBoxContainer2/VBoxContainer/SFXHBox" unique_id=270873452]
 unique_name_in_owner = true
-clip_contents = true
 custom_minimum_size = Vector2(50, 0)
+clip_contents = true
 layout_mode = 2
 size_flags_horizontal = 3
 max_value = 1.0

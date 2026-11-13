@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bqft37mjb3ugt"]
 
 [ext_resource type="Script" uid="uid://bosuxxqu7ihfu" path="res://Scripts/Main/main.gd" id="1_lixft"]
-[ext_resource type="PackedScene" uid="uid://dafxpj0c1t616" path="res://Scenes/UI/Pause Menu/pause_menu.tscn" id="2_76geb"]
+[ext_resource type="PackedScene" uid="uid://dafxpj0c1t616" path="res://Scenes/UI/PauseMenu/pause_menu.tscn" id="2_76geb"]
 [ext_resource type="Shader" uid="uid://dyjtejd4wpkda" path="res://Shaders/Background/trippy_background.gdshader" id="2_qw60k"]
 [ext_resource type="PackedScene" uid="uid://dcp81nxwcbiqy" path="res://Scenes/Misc/chinchilla/input_test_chinchilla.tscn" id="4_5yls4"]
 [ext_resource type="PackedScene" uid="uid://ohlfcjhf7852" path="res://Scenes/Misc/chinchilla/chinchilla_poop.tscn" id="5_2a143"]
